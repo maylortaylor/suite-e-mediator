@@ -1,0 +1,8 @@
+2025-08-16 22:10:00,128 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-16 22:10:00,128 - core.config - INFO - Loaded 5 default presets
+2025-08-16 22:10:00,128 - core.config - INFO - Loaded 4 device profiles
+2025-08-16 22:10:00,128 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-16 22:10:00,128 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-16 22:10:00,128 - core.processor - INFO - Media processor initialized
+2025-08-16 22:10:00,369 - gui.main_window - INFO - GUI initialized successfully
+2025-08-16 22:10:00,371 - gui.main_window - INFO - Suite E Studios Media Processor ready
