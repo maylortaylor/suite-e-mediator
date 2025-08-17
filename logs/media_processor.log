@@ -6,3 +6,42 @@
 2025-08-16 22:10:00,128 - core.processor - INFO - Media processor initialized
 2025-08-16 22:10:00,369 - gui.main_window - INFO - GUI initialized successfully
 2025-08-16 22:10:00,371 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-16 22:31:37,219 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-16 22:31:37,219 - core.config - INFO - Loaded 5 default presets
+2025-08-16 22:31:37,219 - core.config - INFO - Loaded 4 device profiles
+2025-08-16 22:31:37,219 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-16 22:31:37,219 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-16 22:31:37,219 - core.processor - INFO - Media processor initialized
+2025-08-16 22:31:37,460 - gui.main_window - INFO - GUI initialized successfully
+2025-08-16 22:31:37,461 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-16 22:35:37,148 - gui.main_window - INFO - Selected preset: final_friday
+2025-08-16 22:35:44,646 - gui.main_window - INFO - Selected preset: second_saturday
+2025-08-16 22:46:19,610 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-16 22:46:19,610 - core.config - INFO - Loaded 5 default presets
+2025-08-16 22:46:19,610 - core.config - INFO - Loaded 4 device profiles
+2025-08-16 22:46:19,610 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-16 22:46:19,610 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-16 22:46:19,610 - core.processor - INFO - Media processor initialized
+2025-08-16 22:46:19,818 - gui.main_window - INFO - Selected preset: social_media
+2025-08-16 22:46:19,818 - gui.main_window - INFO - GUI initialized successfully
+2025-08-16 22:46:19,819 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-16 22:46:37,073 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-16 22:46:37,074 - core.config - INFO - Loaded 5 default presets
+2025-08-16 22:46:37,074 - core.config - INFO - Loaded 4 device profiles
+2025-08-16 22:46:37,074 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-16 22:46:37,074 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-16 22:46:37,074 - core.processor - INFO - Media processor initialized
+2025-08-16 22:46:37,234 - gui.main_window - INFO - Selected preset: social_media
+2025-08-16 22:46:37,235 - gui.main_window - INFO - GUI initialized successfully
+2025-08-16 22:46:37,236 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-16 22:46:43,394 - gui.main_window - INFO - Selected preset: archive
+2025-08-16 22:46:44,994 - gui.main_window - INFO - Selected preset: final_friday
+2025-08-16 22:51:39,510 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-16 22:51:39,510 - core.config - INFO - Loaded 5 default presets
+2025-08-16 22:51:39,510 - core.config - INFO - Loaded 4 device profiles
+2025-08-16 22:51:39,510 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-16 22:51:39,510 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-16 22:51:39,510 - core.processor - INFO - Media processor initialized
+2025-08-16 22:51:39,696 - gui.main_window - INFO - Selected preset: social_media
+2025-08-16 22:51:39,697 - gui.main_window - INFO - GUI initialized successfully
+2025-08-16 22:51:39,697 - gui.main_window - INFO - Suite E Studios Media Processor ready

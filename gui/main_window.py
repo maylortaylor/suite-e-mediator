@@ -32,6 +32,7 @@ class MediaProcessorGUI:
 
         # GUI state
         self.selected_folder = None
+        self.selected_output_folder = None
         self.processing_active = False
 
         # Create main window
@@ -103,17 +104,43 @@ class MediaProcessorGUI:
             width=30,
         )
 
-        # Preset description
-        self.preset_description = ttk.Label(
+        # Preset description - detailed text area
+        self.preset_description = tk.Text(
             self.preset_frame,
-            text=self.config_manager.list_presets().get("social_media", ""),
-            wraplength=400,
+            height=6,
+            width=70,
+            wrap=tk.WORD,
+            state=tk.DISABLED,
+            font=("Arial", 9),
+            background="#f8f8f8",
+            foreground="#333333",
+            relief="sunken",
+            borderwidth=1,
+            padx=8,
+            pady=6,
+        )
+
+        # Output folder selection frame
+        self.output_frame = ttk.LabelFrame(
+            self.main_frame, text="3. Select Output Folder", padding="10"
+        )
+
+        # Output folder selection button and display
+        self.output_button = ttk.Button(
+            self.output_frame,
+            text="Browse Output Folder",
+            command=self.browse_output_folder,
+        )
+
+        self.output_display = ttk.Label(
+            self.output_frame,
+            text="No output folder selected (will use default)",
             foreground="gray",
         )
 
         # Event information frame
         self.event_frame = ttk.LabelFrame(
-            self.main_frame, text="3. Event Information", padding="10"
+            self.main_frame, text="4. Event Information", padding="10"
         )
 
         # Event name input
@@ -136,7 +163,7 @@ class MediaProcessorGUI:
 
         # Processing frame
         self.processing_frame = ttk.LabelFrame(
-            self.main_frame, text="4. Process Media", padding="10"
+            self.main_frame, text="5. Process Media", padding="10"
         )
 
         # Process button
@@ -170,6 +197,9 @@ class MediaProcessorGUI:
         # Bind preset selection change
         self.preset_combo.bind("<<ComboboxSelected>>", self.on_preset_changed)
 
+        # Initialize with default preset description
+        self.on_preset_changed()
+
     def _setup_layout(self):
         """Set up the layout of all widgets."""
 
@@ -189,7 +219,12 @@ class MediaProcessorGUI:
         # Preset selection frame
         self.preset_frame.pack(fill=tk.X, pady=(0, 10))
         self.preset_combo.pack(anchor="w")
-        self.preset_description.pack(anchor="w", pady=(5, 0))
+        self.preset_description.pack(fill=tk.BOTH, expand=True, pady=(5, 0))
+
+        # Output folder selection frame
+        self.output_frame.pack(fill=tk.X, pady=(0, 10))
+        self.output_button.pack(anchor="w")
+        self.output_display.pack(anchor="w", pady=(5, 0))
 
         # Event information frame
         self.event_frame.pack(fill=tk.X, pady=(0, 10))
@@ -223,6 +258,24 @@ class MediaProcessorGUI:
 
             # Scan folder to show file count
             self.scan_folder_async()
+
+    def browse_output_folder(self):
+        """Open output folder browser dialog."""
+        folder_path = filedialog.askdirectory(
+            title="Select output folder for processed media"
+        )
+
+        if folder_path:
+            self.selected_output_folder = Path(folder_path)
+            self.output_display.config(
+                text=str(self.selected_output_folder), foreground="black"
+            )
+            self.update_status(f"Output folder set: {self.selected_output_folder}")
+        else:
+            self.selected_output_folder = None
+            self.output_display.config(
+                text="No output folder selected (will use default)", foreground="gray"
+            )
 
     def scan_folder_async(self):
         """Scan selected folder in background thread."""
@@ -268,10 +321,18 @@ class MediaProcessorGUI:
     def on_preset_changed(self, event=None):
         """Handle preset selection change."""
         selected_preset = self.preset_var.get()
-        presets = self.config_manager.list_presets()
-        description = presets.get(selected_preset, "")
 
-        self.preset_description.config(text=description)
+        # Get the detailed preset information
+        preset = self.config_manager.get_preset(selected_preset)
+        if preset:
+            detailed_description = self._format_preset_description(preset)
+
+            # Update the description text area
+            self.preset_description.config(state=tk.NORMAL)
+            self.preset_description.delete("1.0", tk.END)
+            self.preset_description.insert("1.0", detailed_description)
+            self.preset_description.config(state=tk.DISABLED)
+
         self.update_status(f"Selected preset: {selected_preset}")
 
     def start_processing(self):
@@ -304,13 +365,20 @@ class MediaProcessorGUI:
         # Start processing in background thread
         def processing_worker():
             try:
-                result = self.processor.process_media_folder(
-                    folder_path=str(self.selected_folder),
-                    preset_name=preset_name,
-                    event_name=event_name,
-                    artist_names=artist_names,
-                    progress_callback=self.progress_callback,
-                )
+                # Prepare processing arguments
+                process_args = {
+                    "folder_path": str(self.selected_folder),
+                    "preset_name": preset_name,
+                    "event_name": event_name,
+                    "artist_names": artist_names,
+                    "progress_callback": self.progress_callback,
+                }
+
+                # Add output folder if selected
+                if self.selected_output_folder:
+                    process_args["output_base_path"] = str(self.selected_output_folder)
+
+                result = self.processor.process_media_folder(**process_args)
 
                 # Update UI in main thread
                 self.root.after(0, lambda: self.processing_complete(result))
@@ -383,6 +451,43 @@ class MediaProcessorGUI:
 
         except Exception as e:
             logger.warning(f"Could not open output folder: {e}")
+
+    def _format_preset_description(self, preset):
+        """Format detailed preset description for display."""
+        desc = f"📋 {preset.name}\n"
+        desc += f"{preset.description}\n\n"
+
+        desc += "📸 PHOTO SETTINGS:\n"
+        photo = preset.photo_settings
+        if photo.get("max_resolution"):
+            desc += f"   • Resolution: {photo['max_resolution'][0]}x{photo['max_resolution'][1]}\n"
+        else:
+            desc += f"   • Resolution: Original (no resize)\n"
+        desc += f"   • Quality: {photo.get('quality', 'N/A')}%\n"
+        desc += f"   • Format: {photo.get('format', 'N/A')}\n"
+        desc += f"   • Enhancement: {'Yes' if photo.get('enhance') else 'No'}\n"
+        desc += f"   • Watermark: {'Yes' if photo.get('watermark') else 'No'}\n"
+
+        desc += "\n🎥 VIDEO SETTINGS:\n"
+        video = preset.video_settings
+        if video.get("max_resolution"):
+            desc += f"   • Resolution: {video['max_resolution'][0]}x{video['max_resolution'][1]}\n"
+        else:
+            desc += f"   • Resolution: Original (no resize)\n"
+        desc += f"   • Bitrate: {video.get('bitrate', 'N/A')}\n"
+        desc += f"   • Frame Rate: {video.get('fps', 'N/A')} fps\n"
+        desc += f"   • Codec: {video.get('codec', 'N/A').upper()}\n"
+        desc += f"   • Audio: {video.get('audio_bitrate', 'N/A')}\n"
+
+        desc += "\n📁 ORGANIZATION:\n"
+        org = preset.organization
+        desc += f"   • Folder Structure: {org.get('folder_structure', 'N/A')}\n"
+        desc += f"   • File Naming: {org.get('naming_template', 'N/A')}\n"
+
+        if preset.raw_settings.get("preserve_original"):
+            desc += "\n⚠️  RAW files will be preserved alongside processed versions"
+
+        return desc
 
     def update_status(self, message):
         """Add message to status text area."""
