@@ -88,7 +88,7 @@ class ConfigManager:
                     "fps": 30,
                     "format": "MP4",
                     "codec": "h264",
-                    "audio_bitrate": "128k",
+                    "audio_bitrate": "320k",
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -118,7 +118,7 @@ class ConfigManager:
                     "fps": "original",
                     "format": "MP4",
                     "codec": "h265",  # Better compression for storage
-                    "audio_bitrate": "256k",
+                    "audio_bitrate": "320k",
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -150,7 +150,7 @@ class ConfigManager:
                     "fps": 30,
                     "format": "MP4",
                     "codec": "h264",
-                    "audio_bitrate": "192k",
+                    "audio_bitrate": "320k",
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -407,3 +407,44 @@ class ConfigManager:
         validation_result["valid"] = len(validation_result["errors"]) == 0
 
         return validation_result
+
+    def update_preset(self, preset_name: str, preset: ProcessingPreset):
+        """Update an existing preset.
+
+        Args:
+            preset_name: Name of the preset to update
+            preset: New ProcessingPreset data
+        """
+        if preset_name in self._presets:
+            self._presets[preset_name] = preset
+            logger.info(f"Updated preset: {preset_name}")
+        else:
+            raise ValueError(f"Preset '{preset_name}' not found")
+
+    def add_preset(self, preset_name: str, preset: ProcessingPreset):
+        """Add a new preset.
+
+        Args:
+            preset_name: Name for the new preset
+            preset: ProcessingPreset data
+        """
+        if preset_name in self._presets:
+            raise ValueError(f"Preset '{preset_name}' already exists")
+
+        self._presets[preset_name] = preset
+        logger.info(f"Added new preset: {preset_name}")
+
+    def delete_preset(self, preset_name: str):
+        """Delete a preset.
+
+        Args:
+            preset_name: Name of the preset to delete
+        """
+        if preset_name not in self._presets:
+            raise ValueError(f"Preset '{preset_name}' not found")
+
+        if len(self._presets) <= 1:
+            raise ValueError("Cannot delete the last preset")
+
+        del self._presets[preset_name]
+        logger.info(f"Deleted preset: {preset_name}")

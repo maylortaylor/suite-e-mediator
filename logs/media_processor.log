@@ -45,3 +45,163 @@
 2025-08-16 22:51:39,696 - gui.main_window - INFO - Selected preset: social_media
 2025-08-16 22:51:39,697 - gui.main_window - INFO - GUI initialized successfully
 2025-08-16 22:51:39,697 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 22:43:36,111 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 22:43:36,111 - core.config - INFO - Loaded 5 default presets
+2025-08-18 22:43:36,111 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 22:43:36,111 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 22:43:36,111 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 22:43:36,111 - core.processor - INFO - Media processor initialized
+2025-08-18 22:43:36,319 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 22:43:36,320 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 22:43:36,320 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 22:47:03,529 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 22:47:03,529 - core.config - INFO - Loaded 5 default presets
+2025-08-18 22:47:03,529 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 22:47:03,529 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 22:47:03,529 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 22:47:03,529 - core.processor - INFO - Media processor initialized
+2025-08-18 22:47:03,720 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 22:47:03,720 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 22:47:03,721 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 22:51:30,513 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 22:51:30,514 - core.config - INFO - Loaded 5 default presets
+2025-08-18 22:51:30,514 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 22:51:30,514 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 22:51:30,514 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 22:51:30,514 - core.processor - INFO - Media processor initialized
+2025-08-18 22:51:30,701 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 22:51:30,701 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 22:51:30,702 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 22:51:42,241 - gui.main_window - INFO - Selected preset: archive
+2025-08-18 22:52:07,521 - gui.main_window - INFO - Selected preset: final_friday
+2025-08-18 22:52:25,904 - gui.main_window - INFO - Selected preset: second_saturday
+2025-08-18 22:52:43,678 - gui.main_window - INFO - Selected preset: website
+2025-08-18 22:59:18,053 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 22:59:18,054 - core.config - INFO - Loaded 5 default presets
+2025-08-18 22:59:18,054 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 22:59:18,054 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 22:59:18,054 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 22:59:18,054 - core.processor - INFO - Media processor initialized
+2025-08-18 22:59:18,266 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 22:59:18,268 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 22:59:18,269 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:21:48,021 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:21:48,021 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:21:48,021 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:21:48,022 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:21:48,022 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:21:48,022 - core.processor - INFO - Media processor initialized
+2025-08-18 23:21:48,234 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:21:48,236 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:21:48,237 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:21:58,651 - gui.main_window - INFO - Selected preset: archive
+2025-08-18 23:21:58,726 - gui.main_window - INFO - Selected preset: final_friday
+2025-08-18 23:21:58,817 - gui.main_window - INFO - Selected preset: second_saturday
+2025-08-18 23:21:58,942 - gui.main_window - INFO - Selected preset: website
+2025-08-18 23:21:59,484 - gui.main_window - INFO - Selected preset: second_saturday
+2025-08-18 23:21:59,551 - gui.main_window - INFO - Selected preset: final_friday
+2025-08-18 23:21:59,669 - gui.main_window - INFO - Selected preset: archive
+2025-08-18 23:21:59,793 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:22:20,897 - gui.main_window - INFO - Scanning folder for media files...
+2025-08-18 23:22:20,897 - core.file_scanner - INFO - Scanning directory: /Users/matttaylor/Downloads (recursive=True)
+2025-08-18 23:22:21,885 - core.file_scanner - INFO - Found 1 sets of duplicate files
+2025-08-18 23:22:21,885 - core.file_scanner - INFO - Scan completed. Found 12 media files
+2025-08-18 23:22:21,885 - gui.main_window - INFO - Ready to process 12 media files
+2025-08-18 23:28:50,524 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:28:50,524 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:28:50,524 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:28:50,524 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:28:50,524 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:28:50,524 - core.processor - INFO - Media processor initialized
+2025-08-18 23:28:50,734 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:28:50,743 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name
+2025-08-18 23:28:50,745 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:28:50,746 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:29:01,993 - gui.main_window - INFO - Scanning folder for media files...
+2025-08-18 23:29:01,994 - core.file_scanner - INFO - Scanning directory: /Users/matttaylor/Downloads (recursive=True)
+2025-08-18 23:29:02,922 - core.file_scanner - INFO - Found 1 sets of duplicate files
+2025-08-18 23:29:02,922 - core.file_scanner - INFO - Scan completed. Found 12 media files
+2025-08-18 23:29:02,925 - gui.main_window - INFO - Found 12 processable media files
+2025-08-18 23:29:02,925 - gui.main_window - INFO - ⚠️ Missing requirements: event name
+2025-08-18 23:29:09,167 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:09,376 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:09,516 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:10,777 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:10,949 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:11,106 - gui.main_window - INFO - ⚠️ Missing requirements: event name
+2025-08-18 23:29:11,342 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:11,550 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:12,555 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:12,739 - gui.main_window - INFO - ⚠️ Missing requirements: event name
+2025-08-18 23:29:13,059 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,135 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,187 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,303 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,456 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,804 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:13,994 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,066 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,130 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,288 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,538 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,700 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,754 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,900 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:29:14,952 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:35:37,284 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:35:37,284 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:35:37,284 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:35:37,284 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:35:37,284 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:35:37,284 - core.processor - INFO - Media processor initialized
+2025-08-18 23:35:37,468 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:35:37,475 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:35:37,476 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:35:37,477 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:35:37,480 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:36:08,258 - gui.main_window - INFO - Scanning folder for media files...
+2025-08-18 23:36:08,260 - core.file_scanner - INFO - Scanning directory: /Users/matttaylor/Downloads (recursive=True)
+2025-08-18 23:36:09,194 - core.file_scanner - INFO - Found 1 sets of duplicate files
+2025-08-18 23:36:09,194 - core.file_scanner - INFO - Scan completed. Found 12 media files
+2025-08-18 23:36:09,196 - gui.main_window - INFO - Found 12 processable media files
+2025-08-18 23:36:09,198 - gui.main_window - INFO - ⚠️ Missing requirements: event name, output folder
+2025-08-18 23:39:40,142 - gui.main_window - INFO - ⚠️ Missing requirements: output folder
+2025-08-18 23:39:40,366 - gui.main_window - INFO - ⚠️ Missing requirements: output folder
+2025-08-18 23:39:40,478 - gui.main_window - INFO - ⚠️ Missing requirements: output folder
+2025-08-18 23:39:40,635 - gui.main_window - INFO - ⚠️ Missing requirements: output folder
+2025-08-18 23:39:40,804 - gui.main_window - INFO - ⚠️ Missing requirements: output folder
+2025-08-18 23:39:57,536 - gui.main_window - INFO - Output folder set: /Users/matttaylor/Downloads
+2025-08-18 23:39:57,537 - gui.main_window - INFO - ✅ Ready to process - all requirements met!
+2025-08-18 23:51:31,202 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:51:31,203 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:51:31,203 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:51:31,203 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:51:31,203 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:51:31,203 - core.processor - INFO - Media processor initialized
+2025-08-18 23:51:31,384 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:51:31,390 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:51:31,392 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:51:31,393 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:51:31,396 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:52:50,906 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:52:50,906 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:52:50,906 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:52:50,906 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:52:50,906 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:52:50,906 - core.processor - INFO - Media processor initialized
+2025-08-18 23:52:51,076 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:52:51,082 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:52:51,084 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:52:51,085 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:52:51,087 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:54:53,171 - __main__ - INFO - Starting Suite E Studios Media Processor (GUI Mode)
+2025-08-18 23:54:53,171 - core.config - INFO - Loaded 5 default presets
+2025-08-18 23:54:53,171 - core.config - INFO - Loaded 4 device profiles
+2025-08-18 23:54:53,171 - core.config - INFO - Configuration manager initialized with 5 presets
+2025-08-18 23:54:53,171 - core.file_scanner - INFO - File scanner initialized. Supported formats: 6 photo, 3 video
+2025-08-18 23:54:53,171 - core.processor - INFO - Media processor initialized
+2025-08-18 23:54:53,349 - gui.main_window - INFO - Selected preset: social_media
+2025-08-18 23:54:53,355 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
+2025-08-18 23:54:53,356 - gui.main_window - INFO - GUI initialized successfully
+2025-08-18 23:54:53,358 - gui.main_window - INFO - Suite E Studios Media Processor ready
+2025-08-18 23:54:53,360 - gui.main_window - INFO - ⚠️ Missing requirements: valid input media folder, event name, output folder
