@@ -50,6 +50,7 @@ class MediaProcessorGUI:
         # Configure style
         self.style = ttk.Style()
         self.style.theme_use("clam")
+        self._configure_button_styles()
 
         # Create GUI components
         self._create_widgets()
@@ -57,14 +58,98 @@ class MediaProcessorGUI:
 
         logger.info("GUI initialized successfully")
 
+    def _configure_button_styles(self):
+        """Configure custom styles for all buttons."""
+        # Primary action buttons (Browse folders, etc.) - DARK ORANGE for required buttons
+        self.style.configure(
+            "Primary.TButton",
+            font=("Arial", 11, "bold"),
+            foreground="white",
+            background="#CC6600",  # Dark orange
+            borderwidth=2,
+            focuscolor="orange",
+        )
+        self.style.map(
+            "Primary.TButton",
+            background=[("active", "#FF8800"), ("pressed", "#B8860B")],
+            foreground=[("active", "white")],
+        )
+
+        # Success/Action buttons (Save, New, etc.)
+        self.style.configure(
+            "Success.TButton",
+            font=("Arial", 10, "bold"),
+            foreground="white",
+            background="#27AE60",  # Green
+            borderwidth=2,
+            focuscolor="#52D273",
+        )
+        self.style.map(
+            "Success.TButton",
+            background=[("active", "#52D273"), ("pressed", "#1E8449")],
+            foreground=[("active", "white")],
+        )
+
+        # Warning/Delete buttons
+        self.style.configure(
+            "Warning.TButton",
+            font=("Arial", 10, "bold"),
+            foreground="white",
+            background="#E74C3C",  # Red
+            borderwidth=2,
+            focuscolor="#F1948A",
+        )
+        self.style.map(
+            "Warning.TButton",
+            background=[("active", "#F1948A"), ("pressed", "#C0392B")],
+            foreground=[("active", "white")],
+        )
+
+        # Process button (already exists but moved here for organization)
+        self.style.configure(
+            "ProcessButton.TButton",
+            font=("Arial", 14, "bold"),
+            foreground="white",
+            background="#CC6600",  # Dark orange
+            borderwidth=2,
+            focuscolor="orange",
+        )
+        self.style.map(
+            "ProcessButton.TButton",
+            background=[("active", "#FF8800"), ("disabled", "#CCCCCC")],
+            foreground=[("disabled", "#666666")],
+        )
+
+        # Custom notebook style - Light grey for unselected, light blue for selected
+        self.style.configure("Custom.TNotebook", tabposition="n")
+        self.style.configure(
+            "Custom.TNotebook.Tab",
+            background="#D3D3D3",  # Light grey for unselected tabs
+            foreground="black",
+            padding=[20, 8],
+            font=("Arial", 11, "bold"),
+        )
+        self.style.map(
+            "Custom.TNotebook.Tab",
+            background=[
+                ("selected", "#87CEEB"),  # Light blue when selected
+                ("active", "#B0E0E6"),  # Powder blue when hovering
+            ],
+            foreground=[("selected", "black")],
+            padding=[("selected", [22, 9])],  # 10% bigger padding when selected
+            font=[
+                ("selected", ("Arial", 12, "bold"))
+            ],  # Slightly bigger font when selected
+        )
+
     def _create_widgets(self):
         """Create all GUI widgets."""
 
         # Main frame
         self.main_frame = ttk.Frame(self.root, padding="10")
 
-        # Create notebook for tabs
-        self.notebook = ttk.Notebook(self.main_frame)
+        # Create notebook for tabs with custom light blue styling
+        self.notebook = ttk.Notebook(self.main_frame, style="Custom.TNotebook")
 
         # Create tab frames
         self.input_media_tab = ttk.Frame(self.notebook)
@@ -95,7 +180,10 @@ class MediaProcessorGUI:
 
         # Folder selection button and display
         self.folder_button = ttk.Button(
-            self.file_frame, text="Browse for Folder", command=self.browse_folder
+            self.file_frame,
+            text="Browse for Folder",
+            command=self.browse_folder,
+            style="Primary.TButton",
         )
 
         self.folder_display = ttk.Label(
@@ -221,6 +309,7 @@ class MediaProcessorGUI:
             self.output_frame,
             text="Browse Output Folder",
             command=self.browse_output_folder,
+            style="Primary.TButton",
         )
 
         # Required indicator for output folder
@@ -234,21 +323,6 @@ class MediaProcessorGUI:
         # Processing frame
         self.processing_frame = ttk.LabelFrame(
             self.render_tab, text="Process Media", padding="10"
-        )
-
-        # Configure custom button style
-        self.style.configure(
-            "ProcessButton.TButton",
-            font=("Arial", 14, "bold"),
-            foreground="white",
-            background="#CC6600",  # Dark orange
-            borderwidth=2,
-            focuscolor="orange",
-        )
-        self.style.map(
-            "ProcessButton.TButton",
-            background=[("active", "#FF8800"), ("disabled", "#CCCCCC")],
-            foreground=[("disabled", "#666666")],
         )
 
         # Process button - large and prominent
@@ -697,7 +771,6 @@ class MediaProcessorGUI:
             self.update_status(f"Output folder set: {self.selected_output_folder}")
         else:
             self.selected_output_folder = None
-            
 
         # Update validation after folder selection change
         self._update_validation_state()
