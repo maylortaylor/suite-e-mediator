@@ -129,6 +129,7 @@ class MediaProcessorGUI:
             padding=[20, 8],
             font=("Arial", 11, "bold"),
         )
+
         self.style.map(
             "Custom.TNotebook.Tab",
             background=[
@@ -171,11 +172,20 @@ class MediaProcessorGUI:
 
     def _create_input_media_tab_widgets(self):
         """Create widgets for the input media tab."""
+
         # File selection frame (moved from render tab)
         self.file_frame = ttk.LabelFrame(
             self.input_media_tab,
             text="Select Media Folder",
             padding="10",
+        )
+
+        # Required indicator for folder selection
+        self.folder_required_label = ttk.Label(
+            self.file_frame,
+            text="⚠️  THIS IS REQUIRED",
+            foreground="red",
+            font=("Arial", 10, "bold"),
         )
 
         # Folder selection button and display
@@ -190,14 +200,6 @@ class MediaProcessorGUI:
             self.file_frame, text="No folder selected", foreground="gray"
         )
 
-        # Required indicator for folder selection
-        self.folder_required_label = ttk.Label(
-            self.file_frame,
-            text="⚠️  THIS IS REQUIRED",
-            foreground="red",
-            font=("Arial", 10, "bold"),
-        )
-
         # File count display
         self.file_count_label = ttk.Label(self.file_frame, text="", foreground="blue")
 
@@ -208,17 +210,19 @@ class MediaProcessorGUI:
             self.event_info_tab, text="Event Information", padding="10"
         )
 
-        # Event name input
-        ttk.Label(self.event_frame, text="Event Name:", font=("Arial", 11)).grid(
-            row=0, column=0, sticky="w", padx=(0, 10)
-        )
-        # Required indicator for event name
+        # Required indicator for folder selection
         self.event_name_required_label = ttk.Label(
             self.event_frame,
             text="⚠️  THIS IS REQUIRED",
             foreground="red",
             font=("Arial", 10, "bold"),
         )
+
+        # Event name input
+        ttk.Label(self.event_frame, text="Event Name:", font=("Arial", 11)).grid(
+            row=0, column=0, sticky="w", padx=(0, 10)
+        )
+
         self.event_name_required_label.grid(row=0, column=1, sticky="w", padx=(10, 0))
         self.event_name_var = tk.StringVar()
         self.event_name_var.trace_add("write", self._on_event_name_changed)
@@ -304,20 +308,20 @@ class MediaProcessorGUI:
             padding="10",
         )
 
-        # Output folder selection button and display
-        self.output_button = ttk.Button(
-            self.output_frame,
-            text="Browse Output Folder",
-            command=self.browse_output_folder,
-            style="Primary.TButton",
-        )
-
         # Required indicator for output folder
         self.output_required_label = ttk.Label(
             self.output_frame,
             text="⚠️  THIS IS REQUIRED",
             foreground="red",
             font=("Arial", 10, "bold"),
+        )
+
+        # Output folder selection button and display
+        self.output_button = ttk.Button(
+            self.output_frame,
+            text="Browse Output Folder",
+            command=self.browse_output_folder,
+            style="Primary.TButton",
         )
 
         # Processing frame
@@ -959,36 +963,49 @@ class MediaProcessorGUI:
         """Format detailed preset description for display."""
         desc = f"📋 {preset.name} - {preset.description}\n\n"
 
-        # Get resolution strings for compact display
+        # Get detailed settings
         photo = preset.photo_settings
         video = preset.video_settings
         org = preset.organization
 
-        photo_res = (
-            f"{photo['max_resolution'][0]}x{photo['max_resolution'][1]}"
-            if photo.get("max_resolution")
-            else "Original"
-        )
-        video_res = (
-            f"{video['max_resolution'][0]}x{video['max_resolution'][1]}"
-            if video.get("max_resolution")
-            else "Original"
-        )
+        # Format photo resolution with clear labeling
+        if photo.get("max_resolution"):
+            photo_res = f"Max Resolution: {photo['max_resolution'][0]}x{photo['max_resolution'][1]} pixels"
+        else:
+            photo_res = "Resolution: Keep Original Size (no resizing)"
 
-        # Compact two-column layout
-        desc += f"📸 PHOTOS: {photo_res} • {photo.get('quality', 'N/A')}% • {photo.get('format', 'N/A')} • "
-        desc += f"{'Enhanced' if photo.get('enhance') else 'Standard'} • "
-        desc += f"{'Watermarked' if photo.get('watermark') else 'No watermark'}\n\n"
+        # Format video resolution with clear labeling
+        if video.get("max_resolution"):
+            video_res = f"Max Resolution: {video['max_resolution'][0]}x{video['max_resolution'][1]} pixels"
+        else:
+            video_res = "Resolution: Keep Original Size (no resizing)"
 
-        desc += f"🎥 VIDEOS: {video_res} • {video.get('bitrate', 'N/A')} • {video.get('fps', 'N/A')}fps • "
-        desc += f"{video.get('codec', 'N/A').upper()} • Audio: {video.get('audio_bitrate', 'N/A')}\n\n"
+        # Enhanced photo section with detailed descriptions
+        desc += f"📸 PHOTO SETTINGS:\n"
+        desc += f"   • {photo_res}\n"
+        desc += f"   • JPEG Quality: {photo.get('quality', 'N/A')}% (higher = better quality, larger files)\n"
+        desc += f"   • Output Format: {photo.get('format', 'N/A').upper() if photo.get('format') else 'N/A'}\n"
+        desc += f"   • Processing: {'Enhanced (AI upscaling/noise reduction)' if photo.get('enhance') else 'Standard Processing'}\n"
+        desc += f"   • Watermark: {'Applied' if photo.get('watermark') else 'None'}\n\n"
 
-        desc += f"📁 OUTPUT STRUCTURE:\n"
-        desc += f"   Folders: {org.get('folder_structure', 'N/A')}\n"
-        desc += f"   Files: {org.get('naming_template', 'N/A')}\n"
+        # Enhanced video section with detailed descriptions
+        desc += f"🎥 VIDEO SETTINGS:\n"
+        desc += f"   • {video_res}\n"
+        desc += f"   • Video Bitrate: {video.get('bitrate', 'N/A')} (data rate - higher = better quality)\n"
+        desc += f"   • Frame Rate: {video.get('fps', 'N/A')} fps (frames per second)\n"
+        desc += f"   • Video Codec: {video.get('codec', 'N/A').upper() if video.get('codec') else 'N/A'} (compression format)\n"
+        desc += f"   • Audio Quality: {video.get('audio_bitrate', 'N/A')} bitrate\n\n"
 
+        # Enhanced organization section
+        desc += f"📁 OUTPUT ORGANIZATION:\n"
+        desc += f"   • Folder Structure: {org.get('folder_structure', 'N/A')}\n"
+        desc += f"   • File Naming: {org.get('naming_template', 'N/A')}\n"
+
+        # RAW file handling
         if preset.raw_settings.get("preserve_original"):
-            desc += f"\n⚠️  RAW files preserved alongside processed versions"
+            desc += f"\n📷 RAW FILE HANDLING:\n"
+            desc += f"   ⚠️  Original RAW files will be preserved alongside processed versions\n"
+            desc += f"   ⚠️  This increases storage requirements but maintains full quality originals"
 
         return desc
 
