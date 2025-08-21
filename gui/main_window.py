@@ -648,8 +648,14 @@ class MediaProcessorGUI:
 • {date} - Current date in YYYY-MM-DD format
   Example: "2025-08-21"
 
-• {datetime} - Full date and time stamp in YYYY-MM-DD_HH-MM-SS format
-  Example: "2025-08-21_14-30-25"
+• {date1} - Current date in MM.DD.YYYY format (US style)
+  Example: "08.21.2025"
+
+• {date2} - Current date in YYYY.MM.DD format (ISO style with dots)
+  Example: "2025.08.21"
+
+• {datetime} - Full date and time stamp in MM.DD.YYYY_HH-MM-SS format
+  Example: "08.21.2025_14-30-25"
 
 • {artist_names} - Names of photographers/videographers (if provided)
   Example: "John_Smith" or "Jane_Doe_Mike_Wilson"

@@ -34,7 +34,9 @@ class FileNamer:
                 "fallback": "Unknown_Artist",
             },
             "date": {"source": "system", "format": "%Y-%m-%d"},
-            "datetime": {"source": "system", "format": "%Y-%m-%d_%H-%M-%S"},
+            "date1": {"source": "system", "format": "%m.%d.%Y"},
+            "date2": {"source": "system", "format": "%Y.%m.%d"},
+            "datetime": {"source": "system", "format": "%m.%d.%Y_%H-%M-%S"},
             "dayofweek": {"source": "system", "format": "%A"},
             "date2digit": {"source": "system", "format": "%m"},
             "month_name": {"source": "system", "format": "%B"},
@@ -128,7 +130,9 @@ class FileNamer:
         all_variables.update(
             {
                 "date": now.strftime("%Y-%m-%d"),
-                "datetime": now.strftime("%Y-%m-%d_%H-%M-%S"),
+                "date1": now.strftime("%m.%d.%Y"),
+                "date2": now.strftime("%Y.%m.%d"),
+                "datetime": now.strftime("%m.%d.%Y_%H-%M-%S"),
                 "dayofweek": now.strftime("%A"),
                 "date2digit": now.strftime("%m"),
                 "month_name": now.strftime("%B"),
