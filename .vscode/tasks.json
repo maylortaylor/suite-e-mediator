@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Media Processor",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "main.py"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Media Processor (CLI)",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "main.py",
+                "--cli",
+                "--folder",
+                "${workspaceFolder}/path/to/photos",
+                "--preset",
+                "social_media"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "pytest",
+            "args": [
+                "${workspaceFolder}/tests"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}
