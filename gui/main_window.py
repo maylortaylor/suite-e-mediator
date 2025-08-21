@@ -612,11 +612,59 @@ class MediaProcessorGUI:
             frame, text="Create Output Folders", variable=self.create_folders_var
         ).grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
-        # Available variables help
-        help_text = "Available variables: {event_name}, {date}, {datetime}, {artist_names}, {device}, {media_type}, {sequence}"
+        # Available variables help section
+        variables_frame = ttk.LabelFrame(
+            frame, text="Available Variables", padding="10"
+        )
+        variables_frame.grid(
+            row=3, column=0, columnspan=2, sticky="ew", padx=5, pady=15
+        )
+
+        # Title for available variables
         ttk.Label(
-            frame, text=help_text, font=("Arial", 9), foreground="gray", wraplength=400
-        ).grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=10)
+            variables_frame,
+            text="Available Variables for Naming Templates:",
+            font=("Arial", 12, "bold"),
+        ).pack(anchor="w", pady=(0, 10))
+
+        # Create a text widget for variable descriptions
+        variables_text = tk.Text(
+            variables_frame,
+            height=22,
+            width=60,
+            font=("Arial", 10),
+            wrap=tk.WORD,
+            bg="white",
+            fg="black",
+            relief="flat",
+            borderwidth=1,
+        )
+        variables_text.pack(fill=tk.BOTH, expand=True)
+
+        # Add detailed variable descriptions
+        variable_descriptions = """• {event_name} - The name of your event or photo session
+  Example: "Wedding_Reception" or "Birthday_Party"
+
+• {date} - Current date in YYYY-MM-DD format
+  Example: "2025-08-21"
+
+• {datetime} - Full date and time stamp in YYYY-MM-DD_HH-MM-SS format
+  Example: "2025-08-21_14-30-25"
+
+• {artist_names} - Names of photographers/videographers (if provided)
+  Example: "John_Smith" or "Jane_Doe_Mike_Wilson"
+
+• {device} - Camera or device name extracted from metadata
+  Example: "Canon_EOS_R5" or "iPhone_15_Pro"
+
+• {media_type} - Type of media file being processed
+  Example: "photo", "video", "raw"
+
+• {sequence} - Sequential number for file ordering (use :03d for zero-padding)
+  Example: "001", "002", "003" (when using {sequence:03d})"""
+
+        variables_text.insert(tk.END, variable_descriptions)
+        variables_text.config(state=tk.DISABLED)  # Make read-only
 
     def _create_raw_settings_widgets(self):
         """Create RAW settings widgets."""

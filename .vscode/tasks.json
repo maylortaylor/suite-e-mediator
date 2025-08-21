@@ -1,43 +1,199 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Run Media Processor",
-            "type": "shell",
-            "command": "python3",
-            "args": [
-                "main.py"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Media Processor (CLI)",
-            "type": "shell",
-            "command": "python3",
-            "args": [
-                "main.py",
-                "--cli",
-                "--folder",
-                "${workspaceFolder}/path/to/photos",
-                "--preset",
-                "social_media"
-            ],
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Tests",
-            "type": "shell",
-            "command": "pytest",
-            "args": [
-                "${workspaceFolder}/tests"
-            ],
-            "group": "test",
-            "problemMatcher": []
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Media Processor",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["main.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Launch the media processor in GUI mode"
+    },
+    {
+      "label": "Run Media Processor (Debug)",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["main.py", "--debug"],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Launch the media processor in GUI mode with debug logging"
+    },
+    {
+      "label": "Run Media Processor (CLI)",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "main.py",
+        "--cli",
+        "--folder",
+        "${input:mediaFolder}",
+        "--preset",
+        "${input:preset}",
+        "--event-name",
+        "${input:eventName}"
+      ],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Run media processor in CLI mode with prompts for parameters"
+    },
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/pip",
+      "args": ["install", "-r", "requirements.txt"],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Install Python dependencies from requirements.txt"
+    },
+    {
+      "label": "Setup Virtual Environment",
+      "type": "shell",
+      "command": "python3",
+      "args": ["-m", "venv", ".venv"],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Create a new virtual environment"
+    },
+    {
+      "label": "Install and Run",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/pip",
+      "args": [
+        "install",
+        "-r",
+        "requirements.txt",
+        "&&",
+        "${workspaceFolder}/.venv/bin/python",
+        "main.py"
+      ],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "/bin/bash",
+          "args": ["-c"]
         }
-    ]
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Install dependencies and run the media processor"
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["-m", "pytest", "tests/", "-v"],
+      "group": "test",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Run all unit tests"
+    },
+    {
+      "label": "Show CLI Help",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["main.py", "--help"],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Show command line help and usage examples"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "mediaFolder",
+      "description": "Path to media folder",
+      "default": "${workspaceFolder}/test_media",
+      "type": "promptString"
+    },
+    {
+      "id": "eventName",
+      "description": "Event name",
+      "default": "Test Event",
+      "type": "promptString"
+    },
+    {
+      "id": "preset",
+      "description": "Processing preset",
+      "default": "social_media",
+      "type": "pickString",
+      "options": [
+        "final_friday",
+        "second_saturday",
+        "social_media",
+        "archive",
+        "website"
+      ]
+    }
+  ]
 }
