@@ -23,6 +23,7 @@ class ProcessingPreset:
     description: str
     photo_settings: Dict[str, Any]
     video_settings: Dict[str, Any]
+    audio_settings: Dict[str, Any]
     raw_settings: Dict[str, Any]
     organization: Dict[str, Any]
 
@@ -88,7 +89,17 @@ class ConfigManager:
                     "fps": 30,
                     "format": "MP4",
                     "codec": "h264",
-                    "audio_bitrate": "320k",
+                },
+                audio_settings={
+                    "codec": "aac",
+                    "bitrate": "320k",
+                    "sample_rate": 44100,
+                    "channels": 2,
+                    "volume_normalization": True,
+                    "noise_reduction": "light",
+                    "enable_loudness_normalization": True,
+                    "target_lufs": -23.0,
+                    "max_peak": -1.0,
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -118,7 +129,16 @@ class ConfigManager:
                     "fps": "original",
                     "format": "MP4",
                     "codec": "h265",  # Better compression for storage
-                    "audio_bitrate": "320k",
+                },
+                audio_settings={
+                    "codec": "aac",
+                    "bitrate": "320k",
+                    "sample_rate": 48000,
+                    "channels": 2,
+                    "volume_normalization": False,
+                    "noise_reduction": "none",
+                    "preserve_original_audio": True,
+                    "enable_loudness_normalization": False,
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -150,7 +170,19 @@ class ConfigManager:
                     "fps": 30,
                     "format": "MP4",
                     "codec": "h264",
-                    "audio_bitrate": "320k",
+                },
+                audio_settings={
+                    "codec": "aac",
+                    "bitrate": "256k",
+                    "sample_rate": 44100,
+                    "channels": 2,
+                    "volume_normalization": True,
+                    "noise_reduction": "medium",
+                    "enable_loudness_normalization": True,
+                    "target_lufs": -16.0,  # Louder for music content
+                    "max_peak": -1.0,
+                    "music_enhancement": True,
+                    "bass_boost": "subtle",
                 },
                 raw_settings={
                     "convert_to": "JPEG",
@@ -183,6 +215,18 @@ class ConfigManager:
                     "format": "MP4",
                     "codec": "h264",
                 },
+                audio_settings={
+                    "codec": "aac",
+                    "bitrate": "192k",
+                    "sample_rate": 44100,
+                    "channels": 2,
+                    "volume_normalization": True,
+                    "noise_reduction": "medium",
+                    "enable_loudness_normalization": True,
+                    "target_lufs": -20.0,
+                    "max_peak": -1.0,
+                    "ambient_noise_reduction": True,
+                },
                 raw_settings={
                     "convert_to": "JPEG",
                     "quality": 93,
@@ -212,6 +256,18 @@ class ConfigManager:
                     "fps": 30,
                     "format": "MP4",
                     "codec": "h264",
+                },
+                audio_settings={
+                    "codec": "aac",
+                    "bitrate": "192k",
+                    "sample_rate": 44100,
+                    "channels": 2,
+                    "volume_normalization": True,
+                    "noise_reduction": "medium",
+                    "enable_loudness_normalization": True,
+                    "target_lufs": -23.0,
+                    "max_peak": -1.0,
+                    "web_optimized": True,
                 },
                 raw_settings={
                     "convert_to": "JPEG",

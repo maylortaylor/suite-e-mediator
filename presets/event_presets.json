@@ -1,0 +1,226 @@
+{
+  "final_friday": {
+    "name": "Final Friday",
+    "description": "Live music event on the last Friday of each month at Suite E Studios",
+    "event_type": "live_music",
+    "venue": "Suite E Studios",
+    "default_event_name": "Final Friday {month} {year}",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "venue_lighting": "dim",
+        "target_platform": "social_media",
+        "maintain_aspect": true,
+        "jpeg_quality": 85
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "suite_e_event",
+        "output_format": "JPEG",
+        "quality": 90
+      }
+    },
+    "metadata": {
+      "keywords": ["final friday", "live music", "suite e studios", "st pete"],
+      "event_type": "live_music",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "social_media",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{artist_names}_{counter:03d}"
+    }
+  },
+
+  "second_saturday": {
+    "name": "Second Saturday Art Walk",
+    "description": "Monthly art walk event in the Historic Warehouse Arts District",
+    "event_type": "art_walk",
+    "venue": "Suite E Studios",
+    "default_event_name": "Second Saturday {month} {year}",
+    "processing": {
+      "image": {
+        "enhancement_level": "light",
+        "venue_lighting": "natural",
+        "target_platform": "website",
+        "maintain_aspect": true,
+        "jpeg_quality": 88
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "facebook",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "web_optimized",
+        "output_format": "JPEG",
+        "quality": 88
+      }
+    },
+    "metadata": {
+      "keywords": [
+        "second saturday",
+        "art walk",
+        "suite e studios",
+        "warehouse district"
+      ],
+      "event_type": "art_walk",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  },
+
+  "private_event": {
+    "name": "Private Event",
+    "description": "Corporate events, parties, and private bookings",
+    "event_type": "private",
+    "venue": "Suite E Studios",
+    "default_event_name": "Private Event {date}",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "venue_lighting": "stage_lights",
+        "target_platform": "archive",
+        "maintain_aspect": true,
+        "jpeg_quality": 92
+      },
+      "video": {
+        "operation": "compress",
+        "platform": "website",
+        "quality_level": "archive"
+      },
+      "raw": {
+        "preset": "high_quality_archive",
+        "output_format": "JPEG",
+        "quality": 95
+      }
+    },
+    "metadata": {
+      "keywords": ["private event", "suite e studios", "corporate"],
+      "event_type": "private_event",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": false,
+      "style": "subtle",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  },
+
+  "workshop": {
+    "name": "Workshop/Class",
+    "description": "Creative workshops and educational classes",
+    "event_type": "workshop",
+    "venue": "Suite E Studios",
+    "default_event_name": "Workshop {date}",
+    "processing": {
+      "image": {
+        "enhancement_level": "light",
+        "venue_lighting": "natural",
+        "target_platform": "website",
+        "maintain_aspect": true,
+        "jpeg_quality": 85
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "web_optimized",
+        "output_format": "JPEG",
+        "quality": 85
+      }
+    },
+    "metadata": {
+      "keywords": ["workshop", "education", "suite e studios", "creative"],
+      "event_type": "workshop",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "subtle",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  },
+
+  "community_event": {
+    "name": "Community Event",
+    "description": "General community gatherings and collaborative events",
+    "event_type": "community",
+    "venue": "Suite E Studios",
+    "default_event_name": "Community Event {date}",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "venue_lighting": "dim",
+        "target_platform": "social_media",
+        "maintain_aspect": true,
+        "jpeg_quality": 87
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "facebook",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "suite_e_event",
+        "output_format": "JPEG",
+        "quality": 90
+      }
+    },
+    "metadata": {
+      "keywords": ["community", "event", "suite e studios", "collaboration"],
+      "event_type": "community_event",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  }
+}

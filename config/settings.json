@@ -1,0 +1,136 @@
+{
+  "application": {
+    "name": "Suite E Studios Media Processor",
+    "version": "1.0.0",
+    "author": "Suite E Studios",
+    "description": "Professional media processing workflow automation"
+  },
+
+  "processing": {
+    "max_workers": 4,
+    "max_memory_gb": 8,
+    "temp_directory": "/tmp/suite_e_processing",
+    "backup_original_files": true,
+    "create_processing_logs": true
+  },
+
+  "output": {
+    "default_output_structure": "{event_name}/{date}/processed",
+    "default_filename_template": "{event_name}_{date}_{counter:03d}",
+    "create_subdirectories": true,
+    "preserve_directory_structure": false
+  },
+
+  "quality": {
+    "image": {
+      "default_quality": 85,
+      "max_quality": 95,
+      "web_quality": 78,
+      "archive_quality": 92
+    },
+    "video": {
+      "default_bitrate": "3500k",
+      "archive_bitrate": "8000k",
+      "web_bitrate": "2500k",
+      "audio_bitrate": "192k"
+    }
+  },
+
+  "watermark": {
+    "assets_path": "gui/assets",
+    "default_style": "standard",
+    "default_position": "bottom_right",
+    "default_opacity": 0.3
+  },
+
+  "metadata": {
+    "always_backup_original": true,
+    "preserve_exif_data": true,
+    "add_processing_timestamp": true,
+    "default_copyright": "© Suite E Studios"
+  },
+
+  "file_handling": {
+    "supported_image_formats": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".tiff",
+      ".tif",
+      ".webp",
+      ".heic",
+      ".heif"
+    ],
+    "supported_video_formats": [
+      ".mp4",
+      ".mov",
+      ".avi",
+      ".mkv",
+      ".m4v",
+      ".mts",
+      ".m2ts"
+    ],
+    "supported_raw_formats": [
+      ".cr2",
+      ".cr3",
+      ".nef",
+      ".nrw",
+      ".arw",
+      ".dng",
+      ".raf",
+      ".orf",
+      ".rw2"
+    ],
+    "max_file_size_mb": 1000,
+    "skip_corrupted_files": true
+  },
+
+  "logging": {
+    "level": "INFO",
+    "file_path": "logs/media_processor.log",
+    "max_file_size_mb": 10,
+    "backup_count": 5,
+    "console_output": true
+  },
+
+  "gui": {
+    "theme": "default",
+    "window_size": [1200, 800],
+    "remember_last_folder": true,
+    "show_progress_details": true,
+    "auto_preview_results": true
+  },
+
+  "external_tools": {
+    "ffmpeg": {
+      "required": true,
+      "auto_detect": true,
+      "custom_path": null
+    },
+    "dcraw": {
+      "required": false,
+      "auto_detect": true,
+      "custom_path": null
+    },
+    "rawtherapee": {
+      "required": false,
+      "auto_detect": true,
+      "custom_path": null
+    }
+  },
+
+  "performance": {
+    "enable_gpu_acceleration": false,
+    "parallel_image_processing": true,
+    "parallel_video_processing": false,
+    "memory_limit_per_worker_gb": 2,
+    "processing_priority": "normal"
+  },
+
+  "backup": {
+    "create_backups": true,
+    "backup_directory": "backups",
+    "max_backup_age_days": 30,
+    "compress_backups": true
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "social_media": {
+    "name": "Social Media Optimized",
+    "description": "Optimized for Instagram, Facebook, and other social platforms",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "target_platform": "instagram",
+        "maintain_aspect": false,
+        "jpeg_quality": 82
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "web_optimized",
+        "output_format": "JPEG",
+        "quality": 85
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "social_media",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "social_media/{platform}/{date}",
+      "filename_template": "{event_name}_social_{counter:03d}"
+    }
+  },
+
+  "instagram_feed": {
+    "name": "Instagram Feed",
+    "description": "Square format optimized for Instagram feed posts",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "target_platform": "instagram",
+        "maintain_aspect": false,
+        "jpeg_quality": 80,
+        "resize_to": [1080, 1080]
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram",
+        "quality_level": "standard"
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "social_media",
+      "position": "bottom_right"
+    },
+    "output": {
+      "directory_structure": "instagram/feed",
+      "filename_template": "ig_feed_{event_name}_{counter:03d}"
+    }
+  },
+
+  "instagram_stories": {
+    "name": "Instagram Stories",
+    "description": "Vertical format optimized for Instagram Stories",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "target_platform": "instagram_stories",
+        "maintain_aspect": false,
+        "jpeg_quality": 85,
+        "resize_to": [1080, 1920]
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram_stories",
+        "quality_level": "standard"
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "social_media",
+      "position": "bottom_right"
+    },
+    "output": {
+      "directory_structure": "instagram/stories",
+      "filename_template": "ig_story_{event_name}_{counter:03d}"
+    }
+  },
+
+  "facebook": {
+    "name": "Facebook",
+    "description": "Optimized for Facebook posts and sharing",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "target_platform": "facebook",
+        "maintain_aspect": true,
+        "jpeg_quality": 88
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "facebook",
+        "quality_level": "standard"
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "position": "bottom_right"
+    },
+    "output": {
+      "directory_structure": "facebook",
+      "filename_template": "fb_{event_name}_{counter:03d}"
+    }
+  },
+
+  "website": {
+    "name": "Website Content",
+    "description": "Optimized for Suite E Studios website",
+    "processing": {
+      "image": {
+        "enhancement_level": "light",
+        "target_platform": "website",
+        "maintain_aspect": true,
+        "jpeg_quality": 85
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "website",
+        "quality_level": "standard"
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "position": "bottom_right"
+    },
+    "output": {
+      "directory_structure": "website/{date}",
+      "filename_template": "web_{event_name}_{counter:03d}"
+    }
+  },
+
+  "tiktok": {
+    "name": "TikTok",
+    "description": "Vertical format optimized for TikTok",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "target_platform": "instagram_stories",
+        "maintain_aspect": false,
+        "jpeg_quality": 82,
+        "resize_to": [1080, 1920]
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram_stories",
+        "quality_level": "standard"
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "social_media",
+      "position": "bottom_center"
+    },
+    "output": {
+      "directory_structure": "tiktok",
+      "filename_template": "tiktok_{event_name}_{counter:03d}"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "_metadata": {
+    "description": "Custom presets created by users",
+    "version": "1.0",
+    "last_updated": null,
+    "user_presets_count": 0
+  },
+
+  "_template": {
+    "name": "Custom Preset Template",
+    "description": "Template for creating new custom presets",
+    "created_date": null,
+    "created_by": "user",
+    "event_type": "custom",
+    "venue": "Suite E Studios",
+    "processing": {
+      "image": {
+        "enhancement_level": "medium",
+        "venue_lighting": "dim",
+        "target_platform": "social_media",
+        "maintain_aspect": true,
+        "jpeg_quality": 85
+      },
+      "video": {
+        "operation": "social_media",
+        "platform": "instagram",
+        "quality_level": "standard"
+      },
+      "raw": {
+        "preset": "suite_e_event",
+        "output_format": "JPEG",
+        "quality": 90
+      }
+    },
+    "metadata": {
+      "keywords": ["custom", "suite e studios"],
+      "event_type": "custom",
+      "copyright": "© Suite E Studios",
+      "venue": "Suite E Studios",
+      "location": "Historic Warehouse Arts District, St. Petersburg, FL"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "position": "bottom_right"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  }
+}

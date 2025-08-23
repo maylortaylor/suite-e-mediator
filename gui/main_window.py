@@ -416,6 +416,7 @@ class MediaProcessorGUI:
         # Create frames for each settings category
         self.photo_settings_frame = ttk.Frame(self.preset_settings_notebook)
         self.video_settings_frame = ttk.Frame(self.preset_settings_notebook)
+        self.audio_settings_frame = ttk.Frame(self.preset_settings_notebook)
         self.organization_frame = ttk.Frame(self.preset_settings_notebook)
         self.raw_settings_frame = ttk.Frame(self.preset_settings_notebook)
 
@@ -426,12 +427,16 @@ class MediaProcessorGUI:
         self.preset_settings_notebook.add(
             self.video_settings_frame, text="Video Settings"
         )
+        self.preset_settings_notebook.add(
+            self.audio_settings_frame, text="Audio Settings"
+        )
         self.preset_settings_notebook.add(self.organization_frame, text="Organization")
         self.preset_settings_notebook.add(self.raw_settings_frame, text="RAW Settings")
 
         # Create settings widgets
         self._create_photo_settings_widgets()
         self._create_video_settings_widgets()
+        self._create_audio_settings_widgets()
         self._create_organization_widgets()
         self._create_raw_settings_widgets()
 
@@ -509,12 +514,100 @@ class MediaProcessorGUI:
         # Photo enhancement and watermark
         self.photo_enhance_var = tk.BooleanVar(value=True)
         self.photo_watermark_var = tk.BooleanVar(value=True)
+
+        # Enhancement with description
+        enhance_frame = ttk.Frame(frame)
+        enhance_frame.grid(row=5, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+
         ttk.Checkbutton(
-            frame, text="Enable Enhancement", variable=self.photo_enhance_var
-        ).grid(row=5, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+            enhance_frame, text="Enable Enhancement", variable=self.photo_enhance_var
+        ).pack(side=tk.LEFT)
+
+        # Enhancement description
+        enhance_desc = ttk.Label(
+            enhance_frame,
+            text="(Automatically improves brightness, contrast, color balance, and sharpness)",
+            font=("Arial", 9),
+            foreground="gray",
+        )
+        enhance_desc.pack(side=tk.LEFT, padx=(10, 0))
+
+        # Watermark section
+        watermark_frame = ttk.LabelFrame(frame, text="Watermark Settings", padding="10")
+        watermark_frame.grid(
+            row=6, column=0, columnspan=2, sticky="ew", padx=5, pady=10
+        )
+
         ttk.Checkbutton(
-            frame, text="Add Watermark", variable=self.photo_watermark_var
-        ).grid(row=6, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+            watermark_frame, text="Add Watermark", variable=self.photo_watermark_var
+        ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 10))
+
+        # Watermark file selection
+        ttk.Label(watermark_frame, text="Watermark Image:").grid(
+            row=1, column=0, sticky="w", padx=(0, 10), pady=5
+        )
+        self.watermark_file_var = tk.StringVar()
+        self.watermark_file_entry = ttk.Entry(
+            watermark_frame,
+            textvariable=self.watermark_file_var,
+            width=40,
+            state="readonly",
+        )
+        self.watermark_file_entry.grid(
+            row=1, column=1, sticky="ew", padx=(0, 5), pady=5
+        )
+
+        ttk.Button(
+            watermark_frame, text="Browse...", command=self.browse_watermark_file
+        ).grid(row=1, column=2, padx=(5, 0), pady=5)
+
+        # Watermark position
+        ttk.Label(watermark_frame, text="Position:").grid(
+            row=2, column=0, sticky="w", padx=(0, 10), pady=5
+        )
+        self.watermark_position_var = tk.StringVar(value="bottom_right")
+        position_combo = ttk.Combobox(
+            watermark_frame,
+            textvariable=self.watermark_position_var,
+            values=["top_left", "top_right", "center", "bottom_left", "bottom_right"],
+            state="readonly",
+            width=15,
+        )
+        position_combo.grid(row=2, column=1, sticky="w", pady=5)
+
+        # Watermark opacity
+        ttk.Label(watermark_frame, text="Opacity:").grid(
+            row=3, column=0, sticky="w", padx=(0, 10), pady=5
+        )
+        self.watermark_opacity_var = tk.DoubleVar(value=0.3)
+        opacity_scale = ttk.Scale(
+            watermark_frame,
+            from_=0.1,
+            to=1.0,
+            orient="horizontal",
+            length=200,
+            command=lambda value: self.update_opacity_label(value),
+        )
+        opacity_scale.set(0.3)  # Set initial value
+        opacity_scale.grid(row=3, column=1, sticky="w", pady=5)
+
+        self.opacity_label = ttk.Label(watermark_frame, text="30%")
+        self.opacity_label.grid(row=3, column=2, padx=(10, 0), pady=5)
+
+        # Store reference to scale for value retrieval
+        self.opacity_scale = opacity_scale
+
+        # Watermark margin
+        ttk.Label(watermark_frame, text="Margin (px):").grid(
+            row=4, column=0, sticky="w", padx=(0, 10), pady=5
+        )
+        self.watermark_margin_var = tk.IntVar(value=100)
+        ttk.Entry(
+            watermark_frame, textvariable=self.watermark_margin_var, width=10
+        ).grid(row=4, column=1, sticky="w", pady=5)
+
+        # Configure grid weights
+        watermark_frame.grid_columnconfigure(1, weight=1)
 
     def _create_video_settings_widgets(self):
         """Create video settings widgets."""
@@ -573,14 +666,107 @@ class MediaProcessorGUI:
             width=10,
         ).grid(row=3, column=1, sticky="w", padx=5, pady=5)
 
+    def _create_audio_settings_widgets(self):
+        """Create audio settings widgets."""
+        frame = self.audio_settings_frame
+
+        # Audio codec
+        ttk.Label(frame, text="Audio Codec:").grid(
+            row=0, column=0, sticky="w", padx=5, pady=5
+        )
+        self.audio_codec_var = tk.StringVar(value="aac")
+        ttk.Combobox(
+            frame,
+            textvariable=self.audio_codec_var,
+            values=["aac", "mp3", "opus", "flac"],
+            state="readonly",
+            width=12,
+        ).grid(row=0, column=1, sticky="w", padx=5, pady=5)
+
         # Audio bitrate
-        ttk.Label(frame, text="Audio Bitrate:", font=("Arial", 11)).grid(
-            row=4, column=0, sticky="w", padx=5, pady=5
+        ttk.Label(frame, text="Audio Bitrate:").grid(
+            row=1, column=0, sticky="w", padx=5, pady=5
         )
         self.audio_bitrate_var = tk.StringVar(value="320k")
-        ttk.Entry(
-            frame, textvariable=self.audio_bitrate_var, width=15, font=("Arial", 11)
-        ).grid(row=4, column=1, sticky="w", padx=5, pady=5)
+        ttk.Combobox(
+            frame,
+            textvariable=self.audio_bitrate_var,
+            values=["128k", "192k", "256k", "320k"],
+            width=12,
+        ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+
+        # Sample rate
+        ttk.Label(frame, text="Sample Rate:").grid(
+            row=2, column=0, sticky="w", padx=5, pady=5
+        )
+        self.audio_sample_rate_var = tk.IntVar(value=44100)
+        ttk.Combobox(
+            frame,
+            textvariable=self.audio_sample_rate_var,
+            values=[22050, 44100, 48000, 96000],
+            state="readonly",
+            width=12,
+        ).grid(row=2, column=1, sticky="w", padx=5, pady=5)
+
+        # Audio channels
+        ttk.Label(frame, text="Channels:").grid(
+            row=3, column=0, sticky="w", padx=5, pady=5
+        )
+        self.audio_channels_var = tk.IntVar(value=2)
+        ttk.Combobox(
+            frame,
+            textvariable=self.audio_channels_var,
+            values=[1, 2],
+            state="readonly",
+            width=12,
+        ).grid(row=3, column=1, sticky="w", padx=5, pady=5)
+
+        # Volume normalization
+        self.volume_normalization_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            frame,
+            text="Enable Volume Normalization",
+            variable=self.volume_normalization_var,
+        ).grid(row=4, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+
+        # Loudness normalization
+        self.loudness_normalization_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            frame,
+            text="Enable Loudness Normalization (LUFS)",
+            variable=self.loudness_normalization_var,
+        ).grid(row=5, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+
+        # Target LUFS
+        ttk.Label(frame, text="Target LUFS:").grid(
+            row=6, column=0, sticky="w", padx=5, pady=5
+        )
+        self.target_lufs_var = tk.DoubleVar(value=-23.0)
+        ttk.Entry(frame, textvariable=self.target_lufs_var, width=15).grid(
+            row=6, column=1, sticky="w", padx=5, pady=5
+        )
+
+        # Max peak
+        ttk.Label(frame, text="Max Peak (dB):").grid(
+            row=7, column=0, sticky="w", padx=5, pady=5
+        )
+        self.max_peak_var = tk.DoubleVar(value=-1.0)
+        ttk.Entry(frame, textvariable=self.max_peak_var, width=15).grid(
+            row=7, column=1, sticky="w", padx=5, pady=5
+        )
+
+        # Noise reduction
+        ttk.Label(frame, text="Noise Reduction:").grid(
+            row=8, column=0, sticky="w", padx=5, pady=5
+        )
+        self.noise_reduction_var = tk.StringVar(value="light")
+        ttk.Combobox(
+            frame,
+            textvariable=self.noise_reduction_var,
+            values=["none", "light", "medium", "heavy"],
+            state="readonly",
+            width=12,
+        ).grid(row=8, column=1, sticky="w", padx=5, pady=5)
 
     def _create_organization_widgets(self):
         """Create organization settings widgets."""
@@ -832,6 +1018,31 @@ class MediaProcessorGUI:
 
         # Update validation after folder selection change
         self._update_validation_state()
+
+    def browse_watermark_file(self):
+        """Open watermark file browser dialog."""
+        file_path = filedialog.askopenfilename(
+            title="Select watermark image",
+            filetypes=[
+                ("Image files", "*.png *.jpg *.jpeg *.bmp *.gif *.tiff"),
+                ("PNG files", "*.png"),
+                ("JPEG files", "*.jpg *.jpeg"),
+                ("All files", "*.*"),
+            ],
+        )
+
+        if file_path:
+            self.watermark_file_var.set(file_path)
+            self.update_status(f"Watermark file selected: {Path(file_path).name}")
+
+    def update_opacity_label(self, value):
+        """Update opacity label when scale changes."""
+        try:
+            percentage = int(float(value) * 100)
+            self.opacity_label.config(text=f"{percentage}%")
+            self.watermark_opacity_var.set(float(value))
+        except (ValueError, AttributeError):
+            pass
 
     def scan_folder_async(self):
         """Scan selected folder in background thread."""
@@ -1178,6 +1389,15 @@ class MediaProcessorGUI:
         self.photo_enhance_var.set(photo.get("enhance", True))
         self.photo_watermark_var.set(photo.get("watermark", True))
 
+        # Load watermark settings
+        self.watermark_file_var.set(photo.get("watermark_file", ""))
+        self.watermark_position_var.set(photo.get("watermark_position", "bottom_right"))
+        opacity_value = photo.get("watermark_opacity", 0.3)
+        self.watermark_opacity_var.set(opacity_value)
+        self.opacity_scale.set(opacity_value)
+        self.update_opacity_label(str(opacity_value))
+        self.watermark_margin_var.set(photo.get("watermark_margin", 100))
+
         # Video settings
         video = preset.video_settings
         if video.get("max_resolution"):
@@ -1190,7 +1410,20 @@ class MediaProcessorGUI:
         self.video_bitrate_var.set(video.get("bitrate", "3000k"))
         self.video_fps_var.set(str(video.get("fps", 30)))
         self.video_codec_var.set(video.get("codec", "h264"))
-        self.audio_bitrate_var.set(video.get("audio_bitrate", "320k"))
+
+        # Audio settings
+        audio = preset.audio_settings
+        self.audio_codec_var.set(audio.get("codec", "aac"))
+        self.audio_bitrate_var.set(audio.get("bitrate", "320k"))
+        self.audio_sample_rate_var.set(audio.get("sample_rate", 44100))
+        self.audio_channels_var.set(audio.get("channels", 2))
+        self.volume_normalization_var.set(audio.get("volume_normalization", True))
+        self.loudness_normalization_var.set(
+            audio.get("enable_loudness_normalization", True)
+        )
+        self.target_lufs_var.set(audio.get("target_lufs", -23.0))
+        self.max_peak_var.set(audio.get("max_peak", -1.0))
+        self.noise_reduction_var.set(audio.get("noise_reduction", "light"))
 
         # Organization
         org = preset.organization
@@ -1308,6 +1541,10 @@ class MediaProcessorGUI:
             "format": self.photo_format_var.get(),
             "enhance": self.photo_enhance_var.get(),
             "watermark": self.photo_watermark_var.get(),
+            "watermark_file": self.watermark_file_var.get(),
+            "watermark_position": self.watermark_position_var.get(),
+            "watermark_opacity": float(self.opacity_scale.get()),
+            "watermark_margin": self.watermark_margin_var.get(),
         }
 
         if not self.photo_original_var.get():
@@ -1324,7 +1561,6 @@ class MediaProcessorGUI:
             "fps": int(self.video_fps_var.get()),
             "format": "MP4",
             "codec": self.video_codec_var.get(),
-            "audio_bitrate": self.audio_bitrate_var.get(),
         }
 
         if not self.video_original_var.get():
@@ -1334,6 +1570,19 @@ class MediaProcessorGUI:
             ]
         else:
             video_settings["max_resolution"] = None
+
+        # Audio settings
+        audio_settings = {
+            "codec": self.audio_codec_var.get(),
+            "bitrate": self.audio_bitrate_var.get(),
+            "sample_rate": int(self.audio_sample_rate_var.get()),
+            "channels": int(self.audio_channels_var.get()),
+            "volume_normalization": self.volume_normalization_var.get(),
+            "enable_loudness_normalization": self.loudness_normalization_var.get(),
+            "target_lufs": float(self.target_lufs_var.get()),
+            "max_peak": float(self.max_peak_var.get()),
+            "noise_reduction": self.noise_reduction_var.get(),
+        }
 
         # RAW settings
         raw_settings = {
@@ -1355,6 +1604,7 @@ class MediaProcessorGUI:
             description=self.preset_desc_var.get(),
             photo_settings=photo_settings,
             video_settings=video_settings,
+            audio_settings=audio_settings,
             raw_settings=raw_settings,
             organization=organization,
         )
