@@ -115,33 +115,6 @@
     }
   },
 
-  "website": {
-    "name": "Website Content",
-    "description": "Optimized for Suite E Studios website",
-    "processing": {
-      "image": {
-        "enhancement_level": "light",
-        "target_platform": "website",
-        "maintain_aspect": true,
-        "jpeg_quality": 85
-      },
-      "video": {
-        "operation": "social_media",
-        "platform": "website",
-        "quality_level": "standard"
-      }
-    },
-    "watermark": {
-      "enabled": true,
-      "style": "standard",
-      "position": "bottom_right"
-    },
-    "output": {
-      "directory_structure": "website/{date}",
-      "filename_template": "web_{event_name}_{counter:03d}"
-    }
-  },
-
   "tiktok": {
     "name": "TikTok",
     "description": "Vertical format optimized for TikTok",

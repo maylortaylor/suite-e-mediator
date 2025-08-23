@@ -1,10 +1,4 @@
 {
-  "_metadata": {
-    "description": "Custom presets created by users",
-    "version": "1.0",
-    "last_updated": null,
-    "user_presets_count": 0
-  },
   "_template": {
     "name": "Custom Preset Template",
     "description": "Template for creating new custom presets",

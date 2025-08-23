@@ -95,7 +95,7 @@
 
   "gui": {
     "theme": "default",
-    "window_size": [1200, 800],
+    "window_size": [1200, 1000],
     "remember_last_folder": true,
     "show_progress_details": true,
     "auto_preview_results": true

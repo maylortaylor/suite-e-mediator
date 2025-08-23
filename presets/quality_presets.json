@@ -32,40 +32,6 @@
     }
   },
 
-  "standard": {
-    "name": "Standard Quality",
-    "description": "Balanced quality and processing speed for most use cases",
-    "processing": {
-      "image": {
-        "enhancement_level": "medium",
-        "jpeg_quality": 85,
-        "maintain_aspect": true
-      },
-      "video": {
-        "operation": "social_media",
-        "platform": "website",
-        "quality_level": "standard"
-      },
-      "raw": {
-        "preset": "suite_e_event",
-        "output_format": "JPEG",
-        "quality": 88
-      }
-    },
-    "watermark": {
-      "enabled": true,
-      "style": "standard"
-    },
-    "processing_options": {
-      "parallel_processing": true,
-      "max_workers": 4
-    },
-    "output": {
-      "directory_structure": "standard/{date}",
-      "filename_template": "{event_name}_{counter:03d}"
-    }
-  },
-
   "professional": {
     "name": "Professional Quality",
     "description": "Maximum quality for important deliverables and client work",
@@ -136,83 +102,6 @@
     "output": {
       "directory_structure": "archive/{year}/{month}/{event_name}",
       "filename_template": "{date}_{event_name}_{counter:03d}"
-    }
-  },
-
-  "print_ready": {
-    "name": "Print Ready",
-    "description": "Optimized for high-quality printing at 300 DPI",
-    "processing": {
-      "image": {
-        "enhancement_level": "medium",
-        "jpeg_quality": 98,
-        "maintain_aspect": true,
-        "preserve_original_size": true,
-        "color_space": "Adobe RGB",
-        "dpi": 300
-      },
-      "video": {
-        "operation": "compress",
-        "quality_level": "archive"
-      },
-      "raw": {
-        "preset": "print_ready",
-        "output_format": "TIFF",
-        "quality": 100,
-        "color_space": "Adobe RGB"
-      }
-    },
-    "watermark": {
-      "enabled": false
-    },
-    "metadata": {
-      "preserve_all_exif": true,
-      "add_color_profile": true
-    },
-    "processing_options": {
-      "parallel_processing": true,
-      "max_workers": 2,
-      "enable_lens_correction": true
-    },
-    "output": {
-      "directory_structure": "print_ready/{event_name}",
-      "filename_template": "{event_name}_print_{counter:03d}"
-    }
-  },
-
-  "web_optimized": {
-    "name": "Web Optimized",
-    "description": "Optimized file sizes and formats for web display",
-    "processing": {
-      "image": {
-        "enhancement_level": "medium",
-        "jpeg_quality": 78,
-        "resize_to": [1920, 1280],
-        "output_format": "WEBP"
-      },
-      "video": {
-        "operation": "social_media",
-        "platform": "website",
-        "quality_level": "standard"
-      },
-      "raw": {
-        "preset": "web_optimized",
-        "output_format": "WEBP",
-        "quality": 80
-      }
-    },
-    "watermark": {
-      "enabled": true,
-      "style": "subtle"
-    },
-    "processing_options": {
-      "parallel_processing": true,
-      "max_workers": 4,
-      "progressive_jpeg": true
-    },
-    "output": {
-      "directory_structure": "web/{date}",
-      "filename_template": "web_{event_name}_{counter:03d}"
     }
   }
 }

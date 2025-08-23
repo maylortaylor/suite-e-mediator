@@ -22,6 +22,158 @@ from core.processor import MediaProcessor
 logger = logging.getLogger(__name__)
 
 
+class ThemeManager:
+    """Manages application themes and styling."""
+
+    def __init__(self):
+        """Initialize theme manager with available themes."""
+        self.themes = {}
+        self.current_theme = "gunship_dark"
+        self._load_themes_from_config()
+
+    def _load_themes_from_config(self):
+        """Load themes from config/themes.json file."""
+        import json
+
+        # Get the path to themes.json
+        current_dir = Path(__file__).parent
+        config_dir = current_dir.parent / "config"
+        themes_file = config_dir / "themes.json"
+
+        try:
+            if themes_file.exists():
+                with open(themes_file, "r") as f:
+                    themes_data = json.load(f)
+
+                # Convert font arrays back to tuples
+                for theme_name, theme_data in themes_data.items():
+                    if "fonts" in theme_data:
+                        for font_name, font_data in theme_data["fonts"].items():
+                            theme_data["fonts"][font_name] = tuple(font_data)
+
+                self.themes = themes_data
+                logger.info(f"Loaded {len(self.themes)} themes from config")
+            else:
+                # Fallback to default themes if file doesn't exist
+                logger.warning("themes.json not found, creating default themes")
+                self._create_default_themes()
+                self._save_themes_to_config()
+        except Exception as e:
+            logger.warning(f"Could not load themes from config: {e}")
+            self._create_default_themes()
+
+    def _create_default_themes(self):
+        """Create default themes as fallback."""
+        self.themes = {
+            "gunship_dark": {
+                "name": "Gunship Dark",
+                "colors": {
+                    "bg_primary": "#2C3E50",
+                    "bg_secondary": "#34495E",
+                    "bg_tertiary": "#3C4F66",
+                    "bg_surface": "#1E2A3A",
+                    "bg_input": "#2F3B4C",
+                    "text_primary": "#ECEFF4",
+                    "text_secondary": "#D4D7DC",
+                    "text_muted": "#8A9BAE",
+                    "text_disabled": "#5D6B7A",
+                    "accent_primary": "#5DADE2",
+                    "accent_secondary": "#48C9B0",
+                    "accent_warning": "#E67E22",
+                    "accent_error": "#E74C3C",
+                    "accent_success": "#27AE60",
+                    "btn_primary": "#34495E",
+                    "btn_primary_hover": "#4A6374",
+                    "btn_primary_active": "#5D7A8C",
+                    "btn_accent": "#5DADE2",
+                    "btn_accent_hover": "#73B9E6",
+                    "btn_accent_active": "#4A9FDD",
+                    "btn_warning": "#E67E22",
+                    "btn_warning_hover": "#EA8C4A",
+                    "btn_error": "#E74C3C",
+                    "btn_error_hover": "#EC6658",
+                    "btn_success": "#27AE60",
+                    "btn_success_hover": "#2ECC71",
+                    "border_light": "#4A5C6D",
+                    "border_medium": "#3C4F66",
+                    "border_dark": "#2C3E50",
+                    "border_accent": "#5DADE2",
+                    "tab_inactive": "#2C3E50",
+                    "tab_active": "#34495E",
+                    "tab_hover": "#3C4F66",
+                    "preset_tab_inactive": "#1A252F",
+                    "preset_tab_active": "#283541",
+                    "preset_tab_hover": "#2C3E50",
+                },
+                "fonts": {
+                    "primary": ("Segoe UI", 11),
+                    "secondary": ("Segoe UI", 10),
+                    "heading": ("Segoe UI", 14, "bold"),
+                    "button": ("Segoe UI", 11, "bold"),
+                    "tab": ("Segoe UI", 11, "bold"),
+                    "title": ("Segoe UI", 21, "bold"),
+                    "subtitle": ("Segoe UI", 13),
+                },
+            }
+        }
+
+    def _save_themes_to_config(self):
+        """Save current themes to config/themes.json file."""
+        import json
+
+        current_dir = Path(__file__).parent
+        config_dir = current_dir.parent / "config"
+        themes_file = config_dir / "themes.json"
+
+        try:
+            # Convert font tuples to arrays for JSON serialization
+            themes_data = {}
+            for theme_name, theme_data in self.themes.items():
+                themes_data[theme_name] = theme_data.copy()
+                if "fonts" in themes_data[theme_name]:
+                    fonts_copy = {}
+                    for font_name, font_tuple in themes_data[theme_name][
+                        "fonts"
+                    ].items():
+                        fonts_copy[font_name] = list(font_tuple)
+                    themes_data[theme_name]["fonts"] = fonts_copy
+
+            with open(themes_file, "w") as f:
+                json.dump(themes_data, f, indent=2)
+
+            logger.info(f"Saved themes to {themes_file}")
+
+        except Exception as e:
+            logger.warning(f"Could not save themes to config: {e}")
+
+    def get_theme(self, theme_name=None):
+        """Get theme configuration."""
+        if theme_name is None:
+            theme_name = self.current_theme
+        return self.themes.get(theme_name, self.themes.get("gunship_dark", {}))
+
+    def set_theme(self, theme_name):
+        """Set the current theme."""
+        if theme_name in self.themes:
+            self.current_theme = theme_name
+            return True
+        return False
+
+    def get_color(self, color_name, theme_name=None):
+        """Get a specific color from the current or specified theme."""
+        theme = self.get_theme(theme_name)
+        return theme.get("colors", {}).get(color_name, "#FFFFFF")
+
+    def get_font(self, font_name, theme_name=None):
+        """Get a specific font from the current or specified theme."""
+        theme = self.get_theme(theme_name)
+        return theme.get("fonts", {}).get(font_name, ("Segoe UI", 11))
+
+    def get_available_themes(self):
+        """Get list of available theme names."""
+        return list(self.themes.keys())
+
+
 class MediaProcessorGUI:
     """Main application GUI window."""
 
@@ -29,6 +181,9 @@ class MediaProcessorGUI:
         """Initialize the GUI application."""
         self.config_manager = ConfigManager()
         self.processor = MediaProcessor(self.config_manager)
+
+        # Initialize theme manager
+        self.theme = ThemeManager()
 
         # GUI state
         self.selected_folder = None
@@ -44,13 +199,16 @@ class MediaProcessorGUI:
         # Create main window
         self.root = tk.Tk()
         self.root.title("Suite E Studios Media Processor")
-        self.root.geometry("1040x780")  # 30% bigger
-        self.root.minsize(780, 520)  # 30% bigger
+        self.root.geometry("1080x1080")
+        self.root.minsize(1080, 1080)
+
+        # Apply theme to main window
+        self.root.configure(bg=self.theme.get_color("bg_primary"))
 
         # Configure style
         self.style = ttk.Style()
         self.style.theme_use("clam")
-        self._configure_button_styles()
+        self._configure_theme_styles()
 
         # Create GUI components
         self._create_widgets()
@@ -58,89 +216,379 @@ class MediaProcessorGUI:
 
         logger.info("GUI initialized successfully")
 
-    def _configure_button_styles(self):
-        """Configure custom styles for all buttons."""
-        # Primary action buttons (Browse folders, etc.) - DARK ORANGE for required buttons
+    def _configure_theme_styles(self):
+        """Configure comprehensive theme styles for all GUI components."""
+        # Configure base styles with theme colors
         self.style.configure(
-            "Primary.TButton",
-            font=("Arial", 11, "bold"),
-            foreground="white",
-            background="#CC6600",  # Dark orange
-            borderwidth=2,
-            focuscolor="orange",
-        )
-        self.style.map(
-            "Primary.TButton",
-            background=[("active", "#FF8800"), ("pressed", "#B8860B")],
-            foreground=[("active", "white")],
+            ".",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_primary"),
+            bordercolor=self.theme.get_color("border_medium"),
+            darkcolor=self.theme.get_color("border_dark"),
+            lightcolor=self.theme.get_color("border_light"),
+            troughcolor=self.theme.get_color("bg_surface"),
+            focuscolor=self.theme.get_color("accent_primary"),
+            selectbackground=self.theme.get_color("accent_primary"),
+            selectforeground=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("primary"),
         )
 
-        # Success/Action buttons (Save, New, etc.)
+        # Frame styles
+        self.style.configure(
+            "TFrame", background=self.theme.get_color("bg_primary"), borderwidth=0
+        )
+
+        # Label frame styles
+        self.style.configure(
+            "TLabelFrame",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_primary"),
+            borderwidth=1,
+            relief="solid",
+            bordercolor=self.theme.get_color("border_medium"),
+        )
+        self.style.configure(
+            "TLabelFrame.Label",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("heading"),
+        )
+
+        # Label styles
+        self.style.configure(
+            "TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("label"),
+        )
+
+        # Entry styles
+        self.style.configure(
+            "TEntry",
+            fieldbackground=self.theme.get_color("bg_input"),
+            background=self.theme.get_color("bg_input"),
+            foreground=self.theme.get_color("text_primary"),
+            bordercolor=self.theme.get_color("border_medium"),
+            insertcolor=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("primary"),
+            padding=[8, 6],  # Horizontal, vertical padding to make taller
+            borderwidth=1,
+        )
+
+        # Combobox styles
+        self.style.configure(
+            "TCombobox",
+            fieldbackground=self.theme.get_color("bg_input"),
+            background=self.theme.get_color("bg_input"),
+            foreground=self.theme.get_color("text_primary"),
+            bordercolor=self.theme.get_color("border_medium"),
+            arrowcolor=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("combobox"),
+            padding=[8, 6],  # Horizontal, vertical padding to make taller
+            borderwidth=1,
+        )
+
+        # Combobox state styling to fix readability
+        self.style.map(
+            "TCombobox",
+            fieldbackground=[
+                ("readonly", self.theme.get_color("bg_input")),
+                ("focus", self.theme.get_color("bg_input")),
+                ("active", self.theme.get_color("bg_surface")),
+            ],
+            background=[
+                ("readonly", self.theme.get_color("bg_input")),
+                ("focus", self.theme.get_color("bg_input")),
+                ("active", self.theme.get_color("bg_surface")),
+            ],
+            foreground=[
+                ("readonly", self.theme.get_color("text_primary")),
+                ("focus", self.theme.get_color("text_primary")),
+                ("active", self.theme.get_color("text_primary")),
+            ],
+            selectbackground=[("readonly", self.theme.get_color("accent_primary"))],
+            selectforeground=[("readonly", self.theme.get_color("text_primary"))],
+        )
+
+        # Scale (slider) styles
+        self.style.configure(
+            "TScale",
+            background=self.theme.get_color("bg_primary"),
+            troughcolor=self.theme.get_color("bg_surface"),
+            bordercolor=self.theme.get_color("border_medium"),
+            lightcolor=self.theme.get_color("accent_primary"),
+            darkcolor=self.theme.get_color("accent_primary"),
+        )
+
+        # Progressbar styles
+        self.style.configure(
+            "TProgressbar",
+            background=self.theme.get_color("accent_primary"),
+            troughcolor=self.theme.get_color("bg_surface"),
+            bordercolor=self.theme.get_color("border_medium"),
+            lightcolor=self.theme.get_color("accent_primary"),
+            darkcolor=self.theme.get_color("accent_primary"),
+        )
+
+        # Primary action buttons - Steel blue accent
+        self.style.configure(
+            "Primary.TButton",
+            font=self.theme.get_font("button"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_accent"),
+            borderwidth=1,
+            focuscolor=self.theme.get_color("accent_primary"),
+        )
+        self.style.map(
+            "Primary.TButton",
+            background=[
+                ("active", self.theme.get_color("btn_accent_hover")),
+                ("pressed", self.theme.get_color("btn_accent_active")),
+            ],
+            foreground=[("active", self.theme.get_color("text_primary"))],
+        )
+
+        # Success/Action buttons
         self.style.configure(
             "Success.TButton",
-            font=("Arial", 10, "bold"),
-            foreground="white",
-            background="#27AE60",  # Green
-            borderwidth=2,
-            focuscolor="#52D273",
+            font=self.theme.get_font("button"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_success"),
+            borderwidth=1,
+            focuscolor=self.theme.get_color("accent_success"),
         )
         self.style.map(
             "Success.TButton",
-            background=[("active", "#52D273"), ("pressed", "#1E8449")],
-            foreground=[("active", "white")],
+            background=[
+                ("active", self.theme.get_color("btn_success_hover")),
+                ("pressed", self.theme.get_color("accent_success")),
+            ],
+            foreground=[("active", self.theme.get_color("text_primary"))],
         )
 
         # Warning/Delete buttons
         self.style.configure(
             "Warning.TButton",
-            font=("Arial", 10, "bold"),
-            foreground="white",
-            background="#E74C3C",  # Red
-            borderwidth=2,
-            focuscolor="#F1948A",
+            font=self.theme.get_font("button"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_error"),
+            borderwidth=1,
+            focuscolor=self.theme.get_color("accent_error"),
         )
         self.style.map(
             "Warning.TButton",
-            background=[("active", "#F1948A"), ("pressed", "#C0392B")],
-            foreground=[("active", "white")],
+            background=[
+                ("active", self.theme.get_color("btn_error_hover")),
+                ("pressed", self.theme.get_color("accent_error")),
+            ],
+            foreground=[("active", self.theme.get_color("text_primary"))],
         )
 
-        # Process button (already exists but moved here for organization)
+        # Process button
         self.style.configure(
             "ProcessButton.TButton",
-            font=("Arial", 14, "bold"),
-            foreground="white",
-            background="#CC6600",  # Dark orange
+            font=self.theme.get_font("heading"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_warning"),
             borderwidth=2,
-            focuscolor="orange",
+            focuscolor=self.theme.get_color("accent_warning"),
         )
         self.style.map(
             "ProcessButton.TButton",
-            background=[("active", "#FF8800"), ("disabled", "#CCCCCC")],
-            foreground=[("disabled", "#666666")],
+            background=[
+                ("active", self.theme.get_color("btn_warning_hover")),
+                ("disabled", self.theme.get_color("text_disabled")),
+            ],
+            foreground=[("disabled", self.theme.get_color("text_muted"))],
         )
 
-        # Custom notebook style - Light grey for unselected, light blue for selected
-        self.style.configure("Custom.TNotebook", tabposition="n")
+        # Secondary buttons
+        self.style.configure(
+            "Secondary.TButton",
+            font=self.theme.get_font("button"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_primary"),
+            borderwidth=1,
+            focuscolor=self.theme.get_color("border_accent"),
+        )
+        self.style.map(
+            "Secondary.TButton",
+            background=[
+                ("active", self.theme.get_color("btn_primary_hover")),
+                ("pressed", self.theme.get_color("btn_primary_active")),
+            ],
+            foreground=[("active", self.theme.get_color("text_primary"))],
+        )
+
+        # Custom notebook style with dark theme
+        self.style.configure(
+            "Custom.TNotebook",
+            tabposition="n",
+            background=self.theme.get_color("bg_primary"),
+        )
         self.style.configure(
             "Custom.TNotebook.Tab",
-            background="#D3D3D3",  # Light grey for unselected tabs
-            foreground="black",
+            background=self.theme.get_color("tab_inactive"),
+            foreground=self.theme.get_color("text_secondary"),
             padding=[20, 8],
-            font=("Arial", 11, "bold"),
+            font=self.theme.get_font("tab"),
+            borderwidth=1,
         )
 
         self.style.map(
             "Custom.TNotebook.Tab",
             background=[
-                ("selected", "#87CEEB"),  # Light blue when selected
-                ("active", "#B0E0E6"),  # Powder blue when hovering
+                ("selected", self.theme.get_color("tab_active")),
+                ("active", self.theme.get_color("tab_hover")),
             ],
-            foreground=[("selected", "black")],
-            padding=[("selected", [22, 9])],  # 10% bigger padding when selected
-            font=[
-                ("selected", ("Arial", 12, "bold"))
-            ],  # Slightly bigger font when selected
+            foreground=[
+                ("selected", self.theme.get_color("text_primary")),
+                ("active", self.theme.get_color("text_primary")),
+            ],
+            padding=[("selected", [22, 9])],
+            font=[("selected", self.theme.get_font("tab"))],
+        )
+
+        # Darker preset settings notebook style
+        self.style.configure(
+            "PresetSettings.TNotebook",
+            tabposition="n",
+            background=self.theme.get_color("bg_primary"),
+        )
+        self.style.configure(
+            "PresetSettings.TNotebook.Tab",
+            background=self.theme.get_color("preset_tab_inactive"),
+            foreground=self.theme.get_color("text_secondary"),
+            padding=[15, 6],
+            font=self.theme.get_font("secondary"),
+            borderwidth=1,
+        )
+
+        self.style.map(
+            "PresetSettings.TNotebook.Tab",
+            background=[
+                ("selected", self.theme.get_color("preset_tab_active")),
+                ("active", self.theme.get_color("preset_tab_hover")),
+            ],
+            foreground=[
+                ("selected", self.theme.get_color("text_primary")),
+                ("active", self.theme.get_color("text_primary")),
+            ],
+            padding=[("selected", [17, 7])],
+            font=[("selected", self.theme.get_font("primary"))],
+        )
+
+        # Specialized label styles
+        # Required field labels
+        self.style.configure(
+            "Required.TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("accent_error"),
+            font=self.theme.get_font("button"),
+        )
+
+        # Info/status labels
+        self.style.configure(
+            "Info.TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("accent_primary"),
+            font=self.theme.get_font("primary"),
+        )
+
+        # Muted/secondary labels
+        self.style.configure(
+            "Muted.TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_muted"),
+            font=self.theme.get_font("secondary"),
+        )
+
+        # Success labels
+        self.style.configure(
+            "Success.TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("accent_success"),
+            font=self.theme.get_font("primary"),
+        )
+
+        # Warning labels
+        self.style.configure(
+            "Warning.TLabel",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("accent_warning"),
+            font=self.theme.get_font("primary"),
+        )
+
+        # Default button style - based on Secondary.TButton
+        self.style.configure(
+            "TButton",
+            font=self.theme.get_font("button"),
+            foreground=self.theme.get_color("text_primary"),
+            background=self.theme.get_color("btn_primary"),
+            borderwidth=1,
+            focuscolor=self.theme.get_color("border_accent"),
+        )
+        self.style.map(
+            "TButton",
+            background=[
+                ("active", self.theme.get_color("btn_primary_hover")),
+                ("pressed", self.theme.get_color("btn_primary_active")),
+            ],
+            foreground=[("active", self.theme.get_color("text_primary"))],
+        )
+
+        # Checkbutton style - based on Secondary.TButton colors
+        self.style.configure(
+            "TCheckbutton",
+            background=self.theme.get_color("bg_primary"),
+            foreground=self.theme.get_color("text_primary"),
+            font=self.theme.get_font("label"),
+            focuscolor=self.theme.get_color("border_accent"),
+        )
+        self.style.map(
+            "TCheckbutton",
+            background=[
+                ("active", self.theme.get_color("bg_primary")),
+                ("pressed", self.theme.get_color("btn_primary_hover")),
+            ],
+            foreground=[
+                ("active", self.theme.get_color("text_primary")),
+                ("pressed", self.theme.get_color("text_primary")),
+            ],
+        )
+
+    def switch_theme(self, theme_name):
+        """Switch to a different theme and refresh all styles."""
+        if self.theme.set_theme(theme_name):
+            # Update main window background
+            self.root.configure(bg=self.theme.get_color("bg_primary"))
+            # Reconfigure all styles
+            self._configure_theme_styles()
+            return True
+        return False
+
+    def get_themed_messagebox_options(self):
+        """Get themed options for messageboxes."""
+        # Note: tkinter messageboxes don't support full theming,
+        # but we can at least provide consistent styling options
+        return {"parent": self.root, "icon": "info"}
+
+    def show_themed_error(self, title, message):
+        """Show error message with theme-appropriate styling."""
+        messagebox.showerror(title, message, **self.get_themed_messagebox_options())
+
+    def show_themed_info(self, title, message):
+        """Show info message with theme-appropriate styling."""
+        messagebox.showinfo(title, message, **self.get_themed_messagebox_options())
+
+    def show_themed_warning(self, title, message):
+        """Show warning message with theme-appropriate styling."""
+        messagebox.showwarning(title, message, **self.get_themed_messagebox_options())
+
+    def show_themed_question(self, title, message):
+        """Show question dialog with theme-appropriate styling."""
+        return messagebox.askyesno(
+            title, message, **self.get_themed_messagebox_options()
         )
 
     def _create_widgets(self):
@@ -164,6 +612,31 @@ class MediaProcessorGUI:
         self.notebook.add(self.render_tab, text="3. RENDER")
         self.notebook.add(self.presets_tab, text="PRESETS")
 
+        # Create logo frame for bottom right positioning
+        self.logo_frame = ttk.Frame(self.main_frame)
+
+        # Load and display Suite E logo in bottom right
+        try:
+            logo_path = (
+                Path(__file__).parent.parent / "images" / "SuiteE_vector_WHITE.png"
+            )
+            self.logo_image = tk.PhotoImage(file=str(logo_path))
+            # Resize the logo to be smaller (subsample by 8 for 1/8 size)
+            self.logo_image = self.logo_image.subsample(8, 8)
+            self.logo_label = ttk.Label(
+                self.logo_frame,
+                image=self.logo_image,
+                background=self.theme.get_color("bg_primary"),
+            )
+        except Exception as e:
+            # Fallback text if image can't be loaded
+            self.logo_label = ttk.Label(
+                self.logo_frame,
+                text="Suite E Studios",
+                font=self.theme.get_font("secondary"),
+                style="Muted.TLabel",
+            )
+
         # Create widgets for each tab
         self._create_input_media_tab_widgets()
         self._create_event_info_tab_widgets()
@@ -182,10 +655,7 @@ class MediaProcessorGUI:
 
         # Required indicator for folder selection
         self.folder_required_label = ttk.Label(
-            self.file_frame,
-            text="⚠️  THIS IS REQUIRED",
-            foreground="red",
-            font=("Arial", 10, "bold"),
+            self.file_frame, text="⚠️  THIS IS REQUIRED", style="Required.TLabel"
         )
 
         # Folder selection button and display
@@ -197,11 +667,11 @@ class MediaProcessorGUI:
         )
 
         self.folder_display = ttk.Label(
-            self.file_frame, text="No folder selected", foreground="gray"
+            self.file_frame, text="No folder selected", style="Muted.TLabel"
         )
 
         # File count display
-        self.file_count_label = ttk.Label(self.file_frame, text="", foreground="blue")
+        self.file_count_label = ttk.Label(self.file_frame, text="", style="Info.TLabel")
 
     def _create_event_info_tab_widgets(self):
         """Create widgets for the event information tab."""
@@ -210,18 +680,15 @@ class MediaProcessorGUI:
             self.event_info_tab, text="Event Information", padding="10"
         )
 
-        # Required indicator for folder selection
+        # Required indicator for event name
         self.event_name_required_label = ttk.Label(
-            self.event_frame,
-            text="⚠️  THIS IS REQUIRED",
-            foreground="red",
-            font=("Arial", 10, "bold"),
+            self.event_frame, text="⚠️  THIS IS REQUIRED", style="Required.TLabel"
         )
 
         # Event name input
-        ttk.Label(self.event_frame, text="Event Name:", font=("Arial", 11)).grid(
-            row=0, column=0, sticky="w", padx=(0, 10)
-        )
+        ttk.Label(
+            self.event_frame, text="Event Name:", font=self.theme.get_font("primary")
+        ).grid(row=0, column=0, sticky="w", padx=(0, 10))
 
         self.event_name_required_label.grid(row=0, column=1, sticky="w", padx=(10, 0))
         self.event_name_var = tk.StringVar()
@@ -230,22 +697,23 @@ class MediaProcessorGUI:
             self.event_frame,
             textvariable=self.event_name_var,
             width=35,
-            font=("Arial", 11),
+            font=self.theme.get_font("primary"),
         )
         self.event_name_entry.grid(
             row=1, column=0, columnspan=2, sticky="w", pady=(5, 10)
         )
 
         # Artist names input
-        ttk.Label(self.event_frame, text="Artist/Band Names:", font=("Arial", 11)).grid(
-            row=2, column=0, sticky="w", padx=(0, 10)
-        )
+        ttk.Label(
+            self.event_frame,
+            text="Artist/Band Names:",
+            font=self.theme.get_font("label"),
+        ).grid(row=2, column=0, sticky="w", padx=(0, 10))
         self.artist_names_var = tk.StringVar()
         self.artist_names_entry = ttk.Entry(
             self.event_frame,
             textvariable=self.artist_names_var,
             width=35,
-            font=("Arial", 11),
         )
 
     def _create_render_tab_widgets(self):
@@ -255,14 +723,14 @@ class MediaProcessorGUI:
         self.title_label = ttk.Label(
             self.render_tab,
             text="Suite E Studios Media Processor",
-            font=("Arial", 21, "bold"),  # 30% bigger
+            font=self.theme.get_font("title"),
         )
 
         # Subtitle
         self.subtitle_label = ttk.Label(
             self.render_tab,
             text="Professional Event Media Processing Tool",
-            font=("Arial", 13),  # 30% bigger
+            style="Muted.TLabel",
         )
 
         # Preset selection frame
@@ -282,7 +750,6 @@ class MediaProcessorGUI:
             values=preset_options,
             state="readonly",
             width=25,
-            font=("Arial", 12),  # 30% bigger font
         )
 
         # Preset description - detailed text area (to the right)
@@ -292,11 +759,15 @@ class MediaProcessorGUI:
             width=65,
             wrap=tk.WORD,
             state=tk.DISABLED,
-            font=("Arial", 11),  # 30% bigger font
-            background="#f8f8f8",
-            foreground="#333333",
-            relief="sunken",
+            font=self.theme.get_font("primary"),
+            background=self.theme.get_color("bg_input"),
+            foreground=self.theme.get_color("text_primary"),
+            relief="solid",
             borderwidth=1,
+            bd=1,
+            highlightthickness=0,
+            selectbackground=self.theme.get_color("accent_primary"),
+            selectforeground=self.theme.get_color("text_primary"),
             padx=10,
             pady=8,
         )
@@ -310,10 +781,7 @@ class MediaProcessorGUI:
 
         # Required indicator for output folder
         self.output_required_label = ttk.Label(
-            self.output_frame,
-            text="⚠️  THIS IS REQUIRED",
-            foreground="red",
-            font=("Arial", 10, "bold"),
+            self.output_frame, text="⚠️  THIS IS REQUIRED", style="Required.TLabel"
         )
 
         # Output folder selection button and display
@@ -355,7 +823,15 @@ class MediaProcessorGUI:
             width=70,
             wrap=tk.WORD,
             state=tk.DISABLED,
-            font=("Arial", 10),
+            font=self.theme.get_font("secondary"),
+            background=self.theme.get_color("bg_input"),
+            foreground=self.theme.get_color("text_primary"),
+            relief="solid",
+            borderwidth=1,
+            bd=1,
+            highlightthickness=0,
+            selectbackground=self.theme.get_color("accent_primary"),
+            selectforeground=self.theme.get_color("text_primary"),
         )
 
         # Scrollbar for status text
@@ -393,7 +869,6 @@ class MediaProcessorGUI:
             values=preset_options,
             state="readonly",
             width=25,
-            font=("Arial", 12),
         )
 
         # Preset management buttons
@@ -402,16 +877,58 @@ class MediaProcessorGUI:
             self.preset_buttons_frame,
             text="Save Changes",
             command=self.save_preset_changes,
+            style="Secondary.TButton",
         )
         self.new_preset_btn = ttk.Button(
-            self.preset_buttons_frame, text="New Preset", command=self.create_new_preset
+            self.preset_buttons_frame,
+            text="New Preset",
+            command=self.create_new_preset,
+            style="Secondary.TButton",
         )
         self.delete_preset_btn = ttk.Button(
-            self.preset_buttons_frame, text="Delete Preset", command=self.delete_preset
+            self.preset_buttons_frame,
+            text="Delete Preset",
+            command=self.delete_preset,
+            style="Warning.TButton",
         )
 
-        # Create notebook for preset settings categories
-        self.preset_settings_notebook = ttk.Notebook(self.preset_editor_frame)
+        # Theme selection section
+        self.theme_frame = ttk.LabelFrame(
+            self.preset_editor_frame, text="Theme Settings", padding="10"
+        )
+
+        # Theme selection dropdown
+        ttk.Label(
+            self.theme_frame,
+            text="Application Theme:",
+            font=self.theme.get_font("primary"),
+        ).grid(row=0, column=0, sticky="w", padx=(0, 10))
+
+        self.theme_var = tk.StringVar(value=self.theme.current_theme)
+        theme_options = self.theme.get_available_themes()
+        self.theme_combo = ttk.Combobox(
+            self.theme_frame,
+            textvariable=self.theme_var,
+            values=theme_options,
+            state="readonly",
+            width=20,
+        )
+        self.theme_combo.grid(row=0, column=1, sticky="w", padx=(0, 10))
+        self.theme_combo.bind("<<ComboboxSelected>>", self.on_theme_changed)
+
+        # Theme apply button
+        self.apply_theme_btn = ttk.Button(
+            self.theme_frame,
+            text="Apply Theme",
+            command=self.apply_theme,
+            style="Secondary.TButton",
+        )
+        self.apply_theme_btn.grid(row=0, column=2, sticky="w", padx=(10, 0))
+
+        # Create notebook for preset settings categories with darker theme
+        self.preset_settings_notebook = ttk.Notebook(
+            self.preset_editor_frame, style="PresetSettings.TNotebook"
+        )
 
         # Create frames for each settings category
         self.photo_settings_frame = ttk.Frame(self.preset_settings_notebook)
@@ -451,26 +968,26 @@ class MediaProcessorGUI:
         frame = self.photo_settings_frame
 
         # Preset name and description
-        ttk.Label(frame, text="Preset Name:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Preset Name:", font=self.theme.get_font("label")).grid(
             row=0, column=0, sticky="w", padx=5, pady=5
         )
         self.preset_name_var = tk.StringVar()
-        ttk.Entry(
-            frame, textvariable=self.preset_name_var, width=30, font=("Arial", 11)
-        ).grid(row=0, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.preset_name_var, width=30).grid(
+            row=0, column=1, sticky="w", padx=5, pady=5
+        )
 
-        ttk.Label(frame, text="Description:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Description:", font=self.theme.get_font("label")).grid(
             row=1, column=0, sticky="nw", padx=5, pady=5
         )
         self.preset_desc_var = tk.StringVar()
-        ttk.Entry(
-            frame, textvariable=self.preset_desc_var, width=50, font=("Arial", 11)
-        ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.preset_desc_var, width=50).grid(
+            row=1, column=1, sticky="w", padx=5, pady=5
+        )
 
         # Photo resolution
-        ttk.Label(frame, text="Max Resolution:", font=("Arial", 11)).grid(
-            row=2, column=0, sticky="w", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="Max Resolution:", font=self.theme.get_font("label")
+        ).grid(row=2, column=0, sticky="w", padx=5, pady=5)
         self.photo_res_frame = ttk.Frame(frame)
         self.photo_res_frame.grid(row=2, column=1, sticky="w", padx=5, pady=5)
 
@@ -481,25 +998,30 @@ class MediaProcessorGUI:
         ttk.Entry(
             self.photo_res_frame, textvariable=self.photo_width_var, width=8
         ).pack(side=tk.LEFT)
-        ttk.Label(self.photo_res_frame, text="x").pack(side=tk.LEFT, padx=5)
+        ttk.Label(
+            self.photo_res_frame, text="x", font=self.theme.get_font("label")
+        ).pack(side=tk.LEFT, padx=5)
         ttk.Entry(
             self.photo_res_frame, textvariable=self.photo_height_var, width=8
         ).pack(side=tk.LEFT)
         ttk.Checkbutton(
-            self.photo_res_frame, text="Keep Original", variable=self.photo_original_var
+            self.photo_res_frame,
+            text="Keep Original",
+            variable=self.photo_original_var,
+            style="TCheckbutton",
         ).pack(side=tk.LEFT, padx=10)
 
         # Photo quality
-        ttk.Label(frame, text="Quality (%):", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Quality (%):", font=self.theme.get_font("label")).grid(
             row=3, column=0, sticky="w", padx=5, pady=5
         )
         self.photo_quality_var = tk.StringVar(value="85")
-        ttk.Entry(
-            frame, textvariable=self.photo_quality_var, width=10, font=("Arial", 11)
-        ).grid(row=3, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.photo_quality_var, width=10).grid(
+            row=3, column=1, sticky="w", padx=5, pady=5
+        )
 
         # Photo format
-        ttk.Label(frame, text="Format:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Format:", font=self.theme.get_font("label")).grid(
             row=4, column=0, sticky="w", padx=5, pady=5
         )
         self.photo_format_var = tk.StringVar(value="JPEG")
@@ -508,6 +1030,7 @@ class MediaProcessorGUI:
             textvariable=self.photo_format_var,
             values=["JPEG", "PNG", "WEBP"],
             state="readonly",
+            style="TCombobox",
             width=10,
         ).grid(row=4, column=1, sticky="w", padx=5, pady=5)
 
@@ -520,15 +1043,18 @@ class MediaProcessorGUI:
         enhance_frame.grid(row=5, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
         ttk.Checkbutton(
-            enhance_frame, text="Enable Enhancement", variable=self.photo_enhance_var
+            enhance_frame,
+            text="Enable Enhancement",
+            variable=self.photo_enhance_var,
+            style="TCheckbutton",
         ).pack(side=tk.LEFT)
 
         # Enhancement description
         enhance_desc = ttk.Label(
             enhance_frame,
             text="(Automatically improves brightness, contrast, color balance, and sharpness)",
-            font=("Arial", 9),
-            foreground="gray",
+            font=self.theme.get_font("secondary"),
+            style="Muted.TLabel",
         )
         enhance_desc.pack(side=tk.LEFT, padx=(10, 0))
 
@@ -539,14 +1065,23 @@ class MediaProcessorGUI:
         )
 
         ttk.Checkbutton(
-            watermark_frame, text="Add Watermark", variable=self.photo_watermark_var
+            watermark_frame,
+            text="Add Watermark",
+            variable=self.photo_watermark_var,
+            style="TCheckbutton",
         ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 10))
 
         # Watermark file selection
-        ttk.Label(watermark_frame, text="Watermark Image:").grid(
-            row=1, column=0, sticky="w", padx=(0, 10), pady=5
+        ttk.Label(
+            watermark_frame, text="Watermark Image:", font=self.theme.get_font("label")
+        ).grid(row=1, column=0, sticky="w", padx=(0, 10), pady=5)
+
+        # Default to the WHITE watermark image
+        default_watermark = str(
+            Path(__file__).parent.parent / "images" / "SuiteE_vector_WHITE.png"
         )
-        self.watermark_file_var = tk.StringVar()
+        self.watermark_file_var = tk.StringVar(value=default_watermark)
+
         self.watermark_file_entry = ttk.Entry(
             watermark_frame,
             textvariable=self.watermark_file_var,
@@ -558,13 +1093,16 @@ class MediaProcessorGUI:
         )
 
         ttk.Button(
-            watermark_frame, text="Browse...", command=self.browse_watermark_file
+            watermark_frame,
+            text="Browse...",
+            command=self.browse_watermark_file,
+            style="Secondary.TButton",
         ).grid(row=1, column=2, padx=(5, 0), pady=5)
 
         # Watermark position
-        ttk.Label(watermark_frame, text="Position:").grid(
-            row=2, column=0, sticky="w", padx=(0, 10), pady=5
-        )
+        ttk.Label(
+            watermark_frame, text="Position:", font=self.theme.get_font("label")
+        ).grid(row=2, column=0, sticky="w", padx=(0, 10), pady=5)
         self.watermark_position_var = tk.StringVar(value="bottom_right")
         position_combo = ttk.Combobox(
             watermark_frame,
@@ -576,9 +1114,9 @@ class MediaProcessorGUI:
         position_combo.grid(row=2, column=1, sticky="w", pady=5)
 
         # Watermark opacity
-        ttk.Label(watermark_frame, text="Opacity:").grid(
-            row=3, column=0, sticky="w", padx=(0, 10), pady=5
-        )
+        ttk.Label(
+            watermark_frame, text="Opacity:", font=self.theme.get_font("label")
+        ).grid(row=3, column=0, sticky="w", padx=(0, 10), pady=5)
         self.watermark_opacity_var = tk.DoubleVar(value=0.3)
         opacity_scale = ttk.Scale(
             watermark_frame,
@@ -598,9 +1136,9 @@ class MediaProcessorGUI:
         self.opacity_scale = opacity_scale
 
         # Watermark margin
-        ttk.Label(watermark_frame, text="Margin (px):").grid(
-            row=4, column=0, sticky="w", padx=(0, 10), pady=5
-        )
+        ttk.Label(
+            watermark_frame, text="Margin (px):", font=self.theme.get_font("label")
+        ).grid(row=4, column=0, sticky="w", padx=(0, 10), pady=5)
         self.watermark_margin_var = tk.IntVar(value=100)
         ttk.Entry(
             watermark_frame, textvariable=self.watermark_margin_var, width=10
@@ -614,9 +1152,9 @@ class MediaProcessorGUI:
         frame = self.video_settings_frame
 
         # Video resolution
-        ttk.Label(frame, text="Max Resolution:", font=("Arial", 11)).grid(
-            row=0, column=0, sticky="w", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="Max Resolution:", font=self.theme.get_font("label")
+        ).grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self.video_res_frame = ttk.Frame(frame)
         self.video_res_frame.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
@@ -627,34 +1165,39 @@ class MediaProcessorGUI:
         ttk.Entry(
             self.video_res_frame, textvariable=self.video_width_var, width=8
         ).pack(side=tk.LEFT)
-        ttk.Label(self.video_res_frame, text="x").pack(side=tk.LEFT, padx=5)
+        ttk.Label(
+            self.video_res_frame, text="x", font=self.theme.get_font("label")
+        ).pack(side=tk.LEFT, padx=5)
         ttk.Entry(
             self.video_res_frame, textvariable=self.video_height_var, width=8
         ).pack(side=tk.LEFT)
         ttk.Checkbutton(
-            self.video_res_frame, text="Keep Original", variable=self.video_original_var
+            self.video_res_frame,
+            text="Keep Original",
+            variable=self.video_original_var,
+            style="TCheckbutton",
         ).pack(side=tk.LEFT, padx=10)
 
         # Video bitrate
-        ttk.Label(frame, text="Bitrate:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Bitrate:", font=self.theme.get_font("label")).grid(
             row=1, column=0, sticky="w", padx=5, pady=5
         )
         self.video_bitrate_var = tk.StringVar(value="3000k")
-        ttk.Entry(
-            frame, textvariable=self.video_bitrate_var, width=15, font=("Arial", 11)
-        ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.video_bitrate_var, width=15).grid(
+            row=1, column=1, sticky="w", padx=5, pady=5
+        )
 
         # Video FPS
-        ttk.Label(frame, text="Frame Rate:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Frame Rate:", font=self.theme.get_font("label")).grid(
             row=2, column=0, sticky="w", padx=5, pady=5
         )
         self.video_fps_var = tk.StringVar(value="30")
-        ttk.Entry(
-            frame, textvariable=self.video_fps_var, width=10, font=("Arial", 11)
-        ).grid(row=2, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.video_fps_var, width=10).grid(
+            row=2, column=1, sticky="w", padx=5, pady=5
+        )
 
         # Video codec
-        ttk.Label(frame, text="Video Codec:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="Video Codec:", font=self.theme.get_font("label")).grid(
             row=3, column=0, sticky="w", padx=5, pady=5
         )
         self.video_codec_var = tk.StringVar(value="h264")
@@ -671,7 +1214,7 @@ class MediaProcessorGUI:
         frame = self.audio_settings_frame
 
         # Audio codec
-        ttk.Label(frame, text="Audio Codec:").grid(
+        ttk.Label(frame, text="Audio Codec:", font=self.theme.get_font("label")).grid(
             row=0, column=0, sticky="w", padx=5, pady=5
         )
         self.audio_codec_var = tk.StringVar(value="aac")
@@ -684,7 +1227,7 @@ class MediaProcessorGUI:
         ).grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
         # Audio bitrate
-        ttk.Label(frame, text="Audio Bitrate:").grid(
+        ttk.Label(frame, text="Audio Bitrate:", font=self.theme.get_font("label")).grid(
             row=1, column=0, sticky="w", padx=5, pady=5
         )
         self.audio_bitrate_var = tk.StringVar(value="320k")
@@ -696,7 +1239,7 @@ class MediaProcessorGUI:
         ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
 
         # Sample rate
-        ttk.Label(frame, text="Sample Rate:").grid(
+        ttk.Label(frame, text="Sample Rate:", font=self.theme.get_font("label")).grid(
             row=2, column=0, sticky="w", padx=5, pady=5
         )
         self.audio_sample_rate_var = tk.IntVar(value=44100)
@@ -709,7 +1252,7 @@ class MediaProcessorGUI:
         ).grid(row=2, column=1, sticky="w", padx=5, pady=5)
 
         # Audio channels
-        ttk.Label(frame, text="Channels:").grid(
+        ttk.Label(frame, text="Channels:", font=self.theme.get_font("label")).grid(
             row=3, column=0, sticky="w", padx=5, pady=5
         )
         self.audio_channels_var = tk.IntVar(value=2)
@@ -727,6 +1270,7 @@ class MediaProcessorGUI:
             frame,
             text="Enable Volume Normalization",
             variable=self.volume_normalization_var,
+            style="TCheckbutton",
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
         # Loudness normalization
@@ -735,10 +1279,11 @@ class MediaProcessorGUI:
             frame,
             text="Enable Loudness Normalization (LUFS)",
             variable=self.loudness_normalization_var,
+            style="TCheckbutton",
         ).grid(row=5, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
         # Target LUFS
-        ttk.Label(frame, text="Target LUFS:").grid(
+        ttk.Label(frame, text="Target LUFS:", font=self.theme.get_font("label")).grid(
             row=6, column=0, sticky="w", padx=5, pady=5
         )
         self.target_lufs_var = tk.DoubleVar(value=-23.0)
@@ -747,7 +1292,7 @@ class MediaProcessorGUI:
         )
 
         # Max peak
-        ttk.Label(frame, text="Max Peak (dB):").grid(
+        ttk.Label(frame, text="Max Peak (dB):", font=self.theme.get_font("label")).grid(
             row=7, column=0, sticky="w", padx=5, pady=5
         )
         self.max_peak_var = tk.DoubleVar(value=-1.0)
@@ -756,9 +1301,9 @@ class MediaProcessorGUI:
         )
 
         # Noise reduction
-        ttk.Label(frame, text="Noise Reduction:").grid(
-            row=8, column=0, sticky="w", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="Noise Reduction:", font=self.theme.get_font("label")
+        ).grid(row=8, column=0, sticky="w", padx=5, pady=5)
         self.noise_reduction_var = tk.StringVar(value="light")
         ttk.Combobox(
             frame,
@@ -773,29 +1318,32 @@ class MediaProcessorGUI:
         frame = self.organization_frame
 
         # Folder structure
-        ttk.Label(frame, text="Folder Structure:", font=("Arial", 11)).grid(
-            row=0, column=0, sticky="nw", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="Folder Structure:", font=self.theme.get_font("label")
+        ).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
         self.folder_structure_var = tk.StringVar(value="{event_name}/Social_Media")
-        ttk.Entry(
-            frame, textvariable=self.folder_structure_var, width=40, font=("Arial", 11)
-        ).grid(row=0, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.folder_structure_var, width=40).grid(
+            row=0, column=1, sticky="w", padx=5, pady=5
+        )
 
         # File naming template
-        ttk.Label(frame, text="File Naming:", font=("Arial", 11)).grid(
+        ttk.Label(frame, text="File Naming:", font=self.theme.get_font("label")).grid(
             row=1, column=0, sticky="nw", padx=5, pady=5
         )
         self.naming_template_var = tk.StringVar(
             value="{event_name}_{date}_{sequence:03d}"
         )
-        ttk.Entry(
-            frame, textvariable=self.naming_template_var, width=40, font=("Arial", 11)
-        ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.naming_template_var, width=40).grid(
+            row=1, column=1, sticky="w", padx=5, pady=5
+        )
 
         # Create folders option
         self.create_folders_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
-            frame, text="Create Output Folders", variable=self.create_folders_var
+            frame,
+            text="Create Output Folders",
+            variable=self.create_folders_var,
+            style="TCheckbutton",
         ).grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
         # Available variables help section
@@ -810,22 +1358,43 @@ class MediaProcessorGUI:
         ttk.Label(
             variables_frame,
             text="Available Variables for Naming Templates:",
-            font=("Arial", 12, "bold"),
-        ).pack(anchor="w", pady=(0, 10))
+            font=self.theme.get_font("heading"),
+        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 10))
 
-        # Create a text widget for variable descriptions
+        # Create a text widget for variable descriptions with proper theming (following preset_description pattern)
         variables_text = tk.Text(
             variables_frame,
-            height=22,
-            width=60,
-            font=("Arial", 10),
+            height=20,
+            width=65,
+            font=self.theme.get_font("secondary"),
             wrap=tk.WORD,
-            bg="white",
-            fg="black",
-            relief="flat",
+            state=tk.NORMAL,
+            bg=self.theme.get_color("bg_input"),
+            fg=self.theme.get_color("text_primary"),
+            relief="solid",
             borderwidth=1,
+            bd=1,
+            highlightthickness=0,
+            selectbackground=self.theme.get_color("accent_primary"),
+            selectforeground=self.theme.get_color("text_primary"),
+            insertbackground=self.theme.get_color("text_primary"),
+            padx=10,
+            pady=8,
         )
-        variables_text.pack(fill=tk.BOTH, expand=True)
+
+        # Create scrollbar using grid layout (more stable than pack)
+        variables_scrollbar = ttk.Scrollbar(
+            variables_frame, orient="vertical", command=variables_text.yview
+        )
+        variables_text.configure(yscrollcommand=variables_scrollbar.set)
+
+        # Grid layout for text widget and scrollbar (following preset_description pattern)
+        variables_text.grid(row=1, column=0, sticky="nsew", pady=5)
+        variables_scrollbar.grid(row=1, column=1, sticky="ns", pady=5)
+
+        # Configure grid weights for proper resizing
+        variables_frame.grid_columnconfigure(0, weight=1)
+        variables_frame.grid_rowconfigure(1, weight=1)
 
         # Add detailed variable descriptions
         variable_descriptions = """• {event_name} - The name of your event or photo session
@@ -863,9 +1432,9 @@ class MediaProcessorGUI:
         frame = self.raw_settings_frame
 
         # Convert to format
-        ttk.Label(frame, text="Convert RAW to:", font=("Arial", 11)).grid(
-            row=0, column=0, sticky="w", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="Convert RAW to:", font=self.theme.get_font("label")
+        ).grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self.raw_convert_var = tk.StringVar(value="JPEG")
         ttk.Combobox(
             frame,
@@ -876,32 +1445,44 @@ class MediaProcessorGUI:
         ).grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
         # RAW quality
-        ttk.Label(frame, text="RAW Quality (%):", font=("Arial", 11)).grid(
-            row=1, column=0, sticky="w", padx=5, pady=5
-        )
+        ttk.Label(
+            frame, text="RAW Quality (%):", font=self.theme.get_font("label")
+        ).grid(row=1, column=0, sticky="w", padx=5, pady=5)
         self.raw_quality_var = tk.StringVar(value="95")
-        ttk.Entry(
-            frame, textvariable=self.raw_quality_var, width=10, font=("Arial", 11)
-        ).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.raw_quality_var, width=10).grid(
+            row=1, column=1, sticky="w", padx=5, pady=5
+        )
 
         # RAW enhancement and preservation
         self.raw_enhance_var = tk.BooleanVar(value=True)
         self.raw_preserve_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(
-            frame, text="Enable RAW Enhancement", variable=self.raw_enhance_var
+            frame,
+            text="Enable RAW Enhancement",
+            variable=self.raw_enhance_var,
+            style="TCheckbutton",
         ).grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
         ttk.Checkbutton(
-            frame, text="Preserve Original RAW Files", variable=self.raw_preserve_var
+            frame,
+            text="Preserve Original RAW Files",
+            variable=self.raw_preserve_var,
+            style="TCheckbutton",
         ).grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
     def _setup_layout(self):
         """Set up the layout of all widgets."""
 
-        # Main frame
+        # Main frame with grid layout
         self.main_frame.pack(fill=tk.BOTH, expand=True)
+        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.main_frame.grid_rowconfigure(0, weight=1)
 
-        # Notebook (tabs)
-        self.notebook.pack(fill=tk.BOTH, expand=True)
+        # Notebook (tabs) - takes up most of the space
+        self.notebook.grid(row=0, column=0, sticky="nsew", padx=(0, 0), pady=(0, 10))
+
+        # Logo frame in bottom right
+        self.logo_frame.grid(row=1, column=0, sticky="se", padx=(0, 10), pady=(0, 10))
+        self.logo_label.pack()
 
         # Setup all tab layouts
         self._setup_input_media_tab_layout()
@@ -976,6 +1557,9 @@ class MediaProcessorGUI:
         self.save_preset_btn.pack(side=tk.LEFT, padx=5)
         self.new_preset_btn.pack(side=tk.LEFT, padx=5)
         self.delete_preset_btn.pack(side=tk.LEFT, padx=5)
+
+        # Theme settings section
+        self.theme_frame.pack(fill=tk.X, pady=(0, 10))
 
         # Settings notebook
         self.preset_settings_notebook.pack(fill=tk.BOTH, expand=True)
@@ -1195,10 +1779,10 @@ class MediaProcessorGUI:
             self.progress_bar["value"] = 100
             self.progress_label.config(text="Processing completed!")
 
-            messagebox.showinfo("Success", success_msg)
+            self.show_themed_info("Success", success_msg)
 
             # Offer to open output folder
-            if messagebox.askyesno(
+            if self.show_themed_question(
                 "Open Output", "Would you like to open the output folder?"
             ):
                 self.open_output_folder(result["output_path"])
@@ -1206,7 +1790,7 @@ class MediaProcessorGUI:
             error_msg = f"Processing failed: {result['error']}"
             self.update_status(error_msg)
             self.progress_label.config(text="Processing failed")
-            messagebox.showerror("Processing Failed", error_msg)
+            self.show_themed_error("Processing Failed", error_msg)
 
     def open_output_folder(self, folder_path):
         """Open output folder in system file explorer."""
@@ -1361,6 +1945,21 @@ class MediaProcessorGUI:
 
         self._update_validation_state()
 
+    def on_theme_changed(self, event=None):
+        """Handle theme selection change."""
+        # Theme will be applied when Apply Theme button is clicked
+        pass
+
+    def apply_theme(self):
+        """Apply the selected theme."""
+        theme_name = self.theme_var.get()
+        if self.switch_theme(theme_name):
+            self.update_status(f"Theme switched to: {self.theme.get_theme()['name']}")
+        else:
+            self.show_themed_error(
+                "Theme Error", f"Could not switch to theme: {theme_name}"
+            )
+
     def on_edit_preset_changed(self, event=None):
         """Handle preset selection change in the presets tab."""
         selected_preset_name = self.edit_preset_var.get()
@@ -1389,8 +1988,11 @@ class MediaProcessorGUI:
         self.photo_enhance_var.set(photo.get("enhance", True))
         self.photo_watermark_var.set(photo.get("watermark", True))
 
-        # Load watermark settings
-        self.watermark_file_var.set(photo.get("watermark_file", ""))
+        # Load watermark settings - preserve default if preset doesn't specify
+        default_watermark = str(
+            Path(__file__).parent.parent / "images" / "SuiteE_vector_WHITE.png"
+        )
+        self.watermark_file_var.set(photo.get("watermark_file", default_watermark))
         self.watermark_position_var.set(photo.get("watermark_position", "bottom_right"))
         opacity_value = photo.get("watermark_opacity", 0.3)
         self.watermark_opacity_var.set(opacity_value)
