@@ -33,6 +33,7 @@ class DeviceProfile:
     """Data class for device-specific processing profile."""
 
     name: str
+    description: str
     detection_criteria: Dict[str, Any]
     default_settings: Dict[str, Any]
     file_patterns: Dict[str, Any]
@@ -69,228 +70,180 @@ class ConfigManager:
         self._load_app_settings()
 
     def _load_default_presets(self):
-        """Load default processing presets."""
-        # Default presets as defined in documentation
-        default_presets = {
-            "social_media": ProcessingPreset(
-                name="Social Media Optimized",
-                description="Optimized for Instagram, Facebook, TikTok sharing",
-                photo_settings={
-                    "max_resolution": [1920, 1920],
-                    "quality": 85,
-                    "format": "JPEG",
-                    "enhance": True,
-                    "watermark": True,
-                    "watermark_style": "subtle",
-                },
-                video_settings={
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "3000k",
-                    "fps": 30,
-                    "format": "MP4",
-                    "codec": "h264",
-                },
-                audio_settings={
-                    "codec": "aac",
-                    "bitrate": "320k",
-                    "sample_rate": 44100,
-                    "channels": 2,
-                    "volume_normalization": True,
-                    "noise_reduction": "light",
-                    "enable_loudness_normalization": True,
-                    "target_lufs": -23.0,
-                    "max_peak": -1.0,
-                },
-                raw_settings={
-                    "convert_to": "JPEG",
-                    "quality": 95,
-                    "enhance": True,
-                    "preserve_original": False,
-                },
-                organization={
-                    "create_folders": True,
-                    "folder_structure": "{event_name}/Social_Media",
-                    "naming_template": "{event_name}_{date}_{sequence:03d}",
-                },
-            ),
-            "archive": ProcessingPreset(
-                name="Archive Quality",
-                description="Maximum quality preservation for long-term storage",
-                photo_settings={
-                    "max_resolution": None,  # Keep original resolution
-                    "quality": 95,
-                    "format": "JPEG",
-                    "enhance": True,
-                    "watermark": False,
-                },
-                video_settings={
-                    "max_resolution": None,  # Keep original resolution
-                    "bitrate": "original",
-                    "fps": "original",
-                    "format": "MP4",
-                    "codec": "h265",  # Better compression for storage
-                },
-                audio_settings={
-                    "codec": "aac",
-                    "bitrate": "320k",
-                    "sample_rate": 48000,
-                    "channels": 2,
-                    "volume_normalization": False,
-                    "noise_reduction": "none",
-                    "preserve_original_audio": True,
-                    "enable_loudness_normalization": False,
-                },
-                raw_settings={
-                    "convert_to": "JPEG",
-                    "quality": 98,
-                    "enhance": True,
-                    "preserve_original": True,
-                },
-                organization={
-                    "create_folders": True,
-                    "folder_structure": "{event_name}/Archive",
-                    "naming_template": "{event_name}_{datetime}_{device}_{sequence:03d}",
-                },
-            ),
-            "final_friday": ProcessingPreset(
-                name="Final Friday Event",
-                description="Optimized for Final Friday music events at Suite E Studios",
-                photo_settings={
-                    "max_resolution": [2048, 2048],
-                    "quality": 88,
-                    "format": "JPEG",
-                    "enhance": True,
-                    "watermark": True,
-                    "watermark_style": "standard",
-                    "venue_lighting": "suite_e_dim",
-                },
-                video_settings={
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "4000k",
-                    "fps": 30,
-                    "format": "MP4",
-                    "codec": "h264",
-                },
-                audio_settings={
-                    "codec": "aac",
-                    "bitrate": "256k",
-                    "sample_rate": 44100,
-                    "channels": 2,
-                    "volume_normalization": True,
-                    "noise_reduction": "medium",
-                    "enable_loudness_normalization": True,
-                    "target_lufs": -16.0,  # Louder for music content
-                    "max_peak": -1.0,
-                    "music_enhancement": True,
-                    "bass_boost": "subtle",
-                },
-                raw_settings={
-                    "convert_to": "JPEG",
-                    "quality": 95,
-                    "enhance": True,
-                    "preserve_original": True,
-                    "venue_preset": "suite_e_event",
-                },
-                organization={
-                    "create_folders": True,
-                    "folder_structure": "{event_name}/{media_type}",
-                    "naming_template": "FF_{date}_{artist_names}_{sequence:03d}",
-                },
-            ),
-            "second_saturday": ProcessingPreset(
-                name="Second Saturday Art Walk",
-                description="Optimized for Second Saturday community art events",
-                photo_settings={
-                    "max_resolution": [1920, 1920],
-                    "quality": 87,
-                    "format": "JPEG",
-                    "enhance": True,
-                    "watermark": True,
-                    "watermark_style": "subtle",
-                },
-                video_settings={
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "3500k",
-                    "fps": 30,
-                    "format": "MP4",
-                    "codec": "h264",
-                },
-                audio_settings={
-                    "codec": "aac",
-                    "bitrate": "192k",
-                    "sample_rate": 44100,
-                    "channels": 2,
-                    "volume_normalization": True,
-                    "noise_reduction": "medium",
-                    "enable_loudness_normalization": True,
-                    "target_lufs": -20.0,
-                    "max_peak": -1.0,
-                    "ambient_noise_reduction": True,
-                },
-                raw_settings={
-                    "convert_to": "JPEG",
-                    "quality": 93,
-                    "enhance": True,
-                    "preserve_original": False,
-                },
-                organization={
-                    "create_folders": True,
-                    "folder_structure": "{event_name}/Community_Event",
-                    "naming_template": "SS_{date}_{location}_{sequence:03d}",
-                },
-            ),
-            "website": ProcessingPreset(
-                name="Website Content",
-                description="Optimized for Suite E Studios website use",
-                photo_settings={
-                    "max_resolution": [1920, 1280],
-                    "quality": 82,
-                    "format": "JPEG",
-                    "enhance": True,
-                    "watermark": True,
-                    "watermark_style": "prominent",
-                },
-                video_settings={
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "5000k",
-                    "fps": 30,
-                    "format": "MP4",
-                    "codec": "h264",
-                },
-                audio_settings={
-                    "codec": "aac",
-                    "bitrate": "192k",
-                    "sample_rate": 44100,
-                    "channels": 2,
-                    "volume_normalization": True,
-                    "noise_reduction": "medium",
-                    "enable_loudness_normalization": True,
-                    "target_lufs": -23.0,
-                    "max_peak": -1.0,
-                    "web_optimized": True,
-                },
-                raw_settings={
-                    "convert_to": "JPEG",
-                    "quality": 90,
-                    "enhance": True,
-                    "preserve_original": False,
-                },
-                organization={
-                    "create_folders": True,
-                    "folder_structure": "{event_name}/Website",
-                    "naming_template": "{event_name}_{date}_web_{sequence:03d}",
-                },
+        """Load default processing presets from JSON files."""
+        preset_files = [
+            self.config_dir.parent / "presets" / "event_presets.json",
+            self.config_dir.parent / "presets" / "platform_presets.json",
+            self.config_dir.parent / "presets" / "quality_presets.json",
+            self.config_dir.parent / "presets" / "custom_presets.json",
+        ]
+
+        loaded_count = 0
+        for preset_file in preset_files:
+            if preset_file.exists():
+                try:
+                    with open(preset_file, "r") as f:
+                        presets_data = json.load(f)
+
+                    for preset_name, preset_config in presets_data.items():
+                        processing_preset = self._convert_json_to_preset(
+                            preset_name, preset_config
+                        )
+                        self._presets[preset_name] = processing_preset
+                        loaded_count += 1
+
+                except Exception as e:
+                    logger.error(f"Failed to load preset file {preset_file}: {e}")
+
+        logger.info(f"Loaded {loaded_count} presets from JSON files")
+
+    def _convert_json_to_preset(
+        self, preset_name: str, json_config: Dict[str, Any]
+    ) -> ProcessingPreset:
+        """Convert JSON configuration to ProcessingPreset object."""
+
+        # Extract basic info
+        name = json_config.get("name", preset_name.replace("_", " ").title())
+        description = json_config.get("description", f"Preset: {name}")
+
+        # Convert processing settings to the expected format
+        processing = json_config.get("processing", {})
+
+        # Photo settings
+        image_config = processing.get("image", {})
+        photo_settings = {
+            "quality": image_config.get("jpeg_quality", 85),
+            "format": "JPEG",
+            "enhance": image_config.get("enhancement_level", "medium") != "none",
+            "watermark": json_config.get("watermark", {}).get("enabled", False),
+            "watermark_style": json_config.get("watermark", {}).get(
+                "style", "standard"
             ),
         }
 
-        self._presets.update(default_presets)
-        logger.info(f"Loaded {len(default_presets)} default presets")
+        # Handle resolution settings
+        if "resize_to" in image_config:
+            photo_settings["max_resolution"] = image_config["resize_to"]
+        elif "target_platform" in image_config:
+            # Platform-specific resolution defaults
+            platform_resolutions = {
+                "instagram": [1080, 1080],
+                "facebook": [1200, 630],
+                "website": [1920, 1280],
+            }
+            photo_settings["max_resolution"] = platform_resolutions.get(
+                image_config["target_platform"], [1920, 1080]
+            )
+        else:
+            photo_settings["max_resolution"] = [1920, 1080]
+
+        # Video settings
+        video_config = processing.get("video", {})
+        video_settings = {
+            "format": "MP4",
+            "codec": "h264",
+            "fps": 30,
+        }
+
+        if video_config.get("platform") == "instagram":
+            video_settings.update(
+                {
+                    "max_resolution": [1080, 1080],
+                    "bitrate": "3000k",
+                }
+            )
+        elif video_config.get("quality_level") == "high":
+            video_settings.update(
+                {
+                    "max_resolution": [1920, 1080],
+                    "bitrate": "5000k",
+                }
+            )
+        else:
+            video_settings.update(
+                {
+                    "max_resolution": [1920, 1080],
+                    "bitrate": "3500k",
+                }
+            )
+
+        # Audio settings (with defaults)
+        audio_settings = {
+            "codec": "aac",
+            "bitrate": "192k",
+            "sample_rate": 44100,
+            "channels": 2,
+            "volume_normalization": True,
+            "noise_reduction": "medium",
+            "enable_loudness_normalization": True,
+            "target_lufs": -23.0,
+            "max_peak": -1.0,
+        }
+
+        # RAW settings
+        raw_config = processing.get("raw", {})
+        raw_settings = {
+            "convert_to": raw_config.get("output_format", "JPEG"),
+            "quality": raw_config.get("quality", 90),
+            "enhance": True,
+            "preserve_original": preset_name in ["archive", "final_friday"],
+        }
+
+        # Organization settings
+        output_config = json_config.get("output", {})
+        organization = {
+            "create_folders": output_config.get("create_subdirectories", True),
+            "folder_structure": output_config.get(
+                "directory_structure", "{event_name}/{date}"
+            ),
+            "naming_template": output_config.get(
+                "filename_template", "{event_name}_{date}_{counter:03d}"
+            ),
+        }
+
+        return ProcessingPreset(
+            name=name,
+            description=description,
+            photo_settings=photo_settings,
+            video_settings=video_settings,
+            audio_settings=audio_settings,
+            raw_settings=raw_settings,
+            organization=organization,
+        )
 
     def _load_device_profiles(self):
-        """Load device-specific processing profiles."""
+        """Load device-specific processing profiles from JSON file."""
+        device_file = self.config_dir / "device_profiles.json"
+
+        if device_file.exists():
+            try:
+                with open(device_file, "r") as f:
+                    profiles_data = json.load(f)
+
+                for profile_name, profile_config in profiles_data.items():
+                    device_profile = DeviceProfile(
+                        name=profile_config.get("name", profile_name),
+                        description=profile_config.get(
+                            "description", f"Device profile for {profile_name}"
+                        ),
+                        detection_criteria=profile_config.get("detection_criteria", {}),
+                        default_settings=profile_config.get("default_settings", {}),
+                        file_patterns=profile_config.get("file_patterns", {}),
+                    )
+                    self._device_profiles[profile_name] = device_profile
+
+                logger.info(f"Loaded {len(profiles_data)} device profiles from JSON")
+                return
+
+            except Exception as e:
+                logger.error(f"Failed to load device profiles from JSON: {e}")
+
+        # Fallback to hardcoded profiles if JSON doesn't exist
+        logger.warning("device_profiles.json not found, using hardcoded defaults")
         default_profiles = {
             "canon_80d": DeviceProfile(
                 name="Canon EOS 80D",
+                description="Canon EOS 80D DSLR camera",
                 detection_criteria={
                     "exif_make": "Canon",
                     "exif_model": "Canon EOS 80D",
@@ -309,6 +262,7 @@ class ConfigManager:
             ),
             "iphone": DeviceProfile(
                 name="iPhone Camera",
+                description="Apple iPhone camera",
                 detection_criteria={
                     "exif_make": "Apple",
                     "filename_pattern": "IMG_\\d{4}\\.(jpg|jpeg|heic)",
@@ -324,48 +278,17 @@ class ConfigManager:
                     "video_pattern": "VID_*.{mov,mp4}",
                 },
             ),
-            "dji_action": DeviceProfile(
-                name="DJI Action Camera",
-                detection_criteria={
-                    "exif_make": "DJI",
-                    "filename_pattern": "DJI_\\d{4}\\.(jpg|mp4)",
-                },
-                default_settings={
-                    "wide_angle_correction": True,
-                    "color_grading": "vibrant_enhancement",
-                    "stabilization_cleanup": True,
-                    "noise_reduction": "medium",
-                },
-                file_patterns={
-                    "photo_pattern": "DJI_*.jpg",
-                    "video_pattern": "DJI_*.mp4",
-                },
-            ),
-            "android": DeviceProfile(
-                name="Android Phone",
-                detection_criteria={
-                    "exif_software": "android",
-                    "variable_quality": True,
-                },
-                default_settings={
-                    "quality_normalization": True,
-                    "color_standardization": True,
-                    "compression_repair": True,
-                    "noise_reduction": "adaptive",
-                },
-                file_patterns={
-                    "photo_pattern": "*.{jpg,jpeg}",
-                    "video_pattern": "*.mp4",
-                },
-            ),
         }
 
         self._device_profiles.update(default_profiles)
-        logger.info(f"Loaded {len(default_profiles)} device profiles")
+        logger.info(f"Loaded {len(default_profiles)} fallback device profiles")
 
     def _load_app_settings(self):
-        """Load application settings."""
-        self._app_settings = {
+        """Load application settings from config/settings.json."""
+        settings_file = self.config_dir / "settings.json"
+
+        # Default settings as fallback
+        default_settings = {
             "default_output_folder": "Processed_Media",
             "preserve_folder_structure": True,
             "create_processing_log": True,
@@ -374,12 +297,33 @@ class ConfigManager:
             "supported_photo_formats": [
                 ".jpg",
                 ".jpeg",
+                ".png",
+                ".tiff",
+                ".tif",
+                ".webp",
+                ".heic",
+                ".heif",
+            ],
+            "supported_video_formats": [
+                ".mp4",
+                ".mov",
+                ".avi",
+                ".mkv",
+                ".m4v",
+                ".mts",
+                ".m2ts",
+            ],
+            "supported_raw_formats": [
                 ".cr2",
                 ".cr3",
-                ".heic",
-                ".png",
+                ".nef",
+                ".nrw",
+                ".arw",
+                ".dng",
+                ".raf",
+                ".orf",
+                ".rw2",
             ],
-            "supported_video_formats": [".mp4", ".mov", ".avi"],
             "venue_info": {
                 "name": "Suite E Studios",
                 "location": "Historic Warehouse Arts District",
@@ -387,6 +331,60 @@ class ConfigManager:
                 "state": "FL",
             },
         }
+
+        if settings_file.exists():
+            try:
+                with open(settings_file, "r") as f:
+                    json_settings = json.load(f)
+
+                # Convert JSON structure to expected format
+                file_handling = json_settings.get("file_handling", {})
+                self._app_settings = {
+                    "default_output_folder": json_settings.get("output", {}).get(
+                        "default_output_structure", "Processed_Media"
+                    ),
+                    "preserve_folder_structure": json_settings.get("output", {}).get(
+                        "preserve_directory_structure", True
+                    ),
+                    "create_processing_log": json_settings.get("processing", {}).get(
+                        "create_processing_logs", True
+                    ),
+                    "backup_before_processing": json_settings.get("processing", {}).get(
+                        "backup_original_files", False
+                    ),
+                    "max_concurrent_processes": json_settings.get("processing", {}).get(
+                        "max_workers", 4
+                    ),
+                    "supported_photo_formats": file_handling.get(
+                        "supported_image_formats", [".jpg", ".jpeg", ".png", ".heic"]
+                    ),
+                    "supported_video_formats": file_handling.get(
+                        "supported_video_formats", [".mp4", ".mov", ".avi"]
+                    ),
+                    "supported_raw_formats": file_handling.get(
+                        "supported_raw_formats",
+                        [".cr2", ".cr3", ".nef", ".arw", ".dng"],
+                    ),
+                    "venue_info": {
+                        "name": "Suite E Studios",
+                        "location": "Historic Warehouse Arts District",
+                        "city": "St. Petersburg",
+                        "state": "FL",
+                    },
+                    "quality_settings": json_settings.get("quality", {}),
+                    "watermark_settings": json_settings.get("watermark", {}),
+                    "metadata_settings": json_settings.get("metadata", {}),
+                    "file_handling": file_handling,
+                }
+
+                logger.info("Loaded application settings from settings.json")
+
+            except Exception as e:
+                logger.error(f"Failed to load settings.json: {e}. Using defaults.")
+                self._app_settings = default_settings
+        else:
+            logger.warning("settings.json not found. Using default settings.")
+            self._app_settings = default_settings
 
     def get_preset(self, preset_name: str) -> Optional[ProcessingPreset]:
         """Get processing preset by name.
@@ -504,3 +502,170 @@ class ConfigManager:
 
         del self._presets[preset_name]
         logger.info(f"Deleted preset: {preset_name}")
+
+    def save_preset_to_json(
+        self, preset_name: str, preset: ProcessingPreset, preset_type: str = "custom"
+    ):
+        """Save a preset to the appropriate JSON file.
+
+        Args:
+            preset_name: The name/key for the preset
+            preset: The ProcessingPreset object to save
+            preset_type: Type of preset ('custom', 'event', 'platform', 'quality')
+        """
+        file_mapping = {
+            "custom": "custom_presets.json",
+            "event": "event_presets.json",
+            "platform": "platform_presets.json",
+            "quality": "quality_presets.json",
+        }
+
+        preset_file = (
+            self.config_dir.parent
+            / "presets"
+            / file_mapping.get(preset_type, "custom_presets.json")
+        )
+
+        # Load existing presets
+        existing_presets = {}
+        if preset_file.exists():
+            try:
+                with open(preset_file, "r") as f:
+                    existing_presets = json.load(f)
+            except Exception as e:
+                logger.error(f"Failed to load existing presets from {preset_file}: {e}")
+
+        # Convert preset to JSON format
+        json_preset = self._convert_preset_to_json(preset)
+
+        # Add/update the preset
+        existing_presets[preset_name] = json_preset
+
+        # Save back to file
+        try:
+            with open(preset_file, "w") as f:
+                json.dump(existing_presets, f, indent=2)
+            logger.info(f"Saved preset '{preset_name}' to {preset_file}")
+        except Exception as e:
+            logger.error(f"Failed to save preset to {preset_file}: {e}")
+
+    def _convert_preset_to_json(self, preset: ProcessingPreset) -> Dict[str, Any]:
+        """Convert ProcessingPreset object back to JSON format."""
+        return {
+            "name": preset.name,
+            "description": preset.description,
+            "processing": {
+                "image": {
+                    "jpeg_quality": preset.photo_settings.get("quality", 85),
+                    "enhancement_level": (
+                        "medium"
+                        if preset.photo_settings.get("enhance", True)
+                        else "none"
+                    ),
+                    "resize_to": preset.photo_settings.get("max_resolution"),
+                },
+                "video": {"quality_level": "standard", "platform": "website"},
+                "raw": {
+                    "output_format": preset.raw_settings.get("convert_to", "JPEG"),
+                    "quality": preset.raw_settings.get("quality", 90),
+                },
+            },
+            "watermark": {
+                "enabled": preset.photo_settings.get("watermark", False),
+                "style": preset.photo_settings.get("watermark_style", "standard"),
+            },
+            "output": {
+                "create_subdirectories": preset.organization.get(
+                    "create_folders", True
+                ),
+                "directory_structure": preset.organization.get(
+                    "folder_structure", "{event_name}/{date}"
+                ),
+                "filename_template": preset.organization.get(
+                    "naming_template", "{event_name}_{date}_{counter:03d}"
+                ),
+            },
+        }
+
+    def get_app_setting(self, key: str, default=None):
+        """Get application setting by key."""
+        return self._app_settings.get(key, default)
+
+    def get_device_profile(self, profile_name: str) -> Optional[DeviceProfile]:
+        """Get device profile by name.
+
+        Args:
+            profile_name: Name of the device profile to retrieve
+
+        Returns:
+            DeviceProfile object or None if not found
+        """
+        return copy.deepcopy(self._device_profiles.get(profile_name))
+
+    def list_device_profiles(self) -> list[str]:
+        """Get list of all available device profile names."""
+        return list(self._device_profiles.keys())
+
+    def detect_device_profile(
+        self, exif_data: Dict[str, Any], filename: str = ""
+    ) -> Optional[str]:
+        """Detect which device profile matches the given EXIF data and filename.
+
+        Args:
+            exif_data: Dictionary containing EXIF metadata
+            filename: Optional filename for pattern matching
+
+        Returns:
+            Device profile name or None if no match found
+        """
+        import re
+
+        for profile_name, profile in self._device_profiles.items():
+            criteria = profile.detection_criteria
+            match = True
+
+            # Check EXIF make
+            if "exif_make" in criteria:
+                make = exif_data.get("make", "").upper()
+                expected_make = criteria["exif_make"].upper()
+                if expected_make not in make:
+                    match = False
+                    continue
+
+            # Check EXIF model with regex support
+            if "exif_model" in criteria:
+                model = exif_data.get("model", "")
+                pattern = criteria["exif_model"]
+                try:
+                    if not re.search(pattern, model, re.IGNORECASE):
+                        match = False
+                        continue
+                except re.error:
+                    # If regex fails, do exact match
+                    if pattern.lower() not in model.lower():
+                        match = False
+                        continue
+
+            # Check filename pattern
+            if "filename_pattern" in criteria and filename:
+                pattern = criteria["filename_pattern"]
+                try:
+                    if not re.search(pattern, filename, re.IGNORECASE):
+                        match = False
+                        continue
+                except re.error:
+                    match = False
+                    continue
+
+            # Check software
+            if "exif_software" in criteria:
+                software = exif_data.get("software", "").lower()
+                expected_software = criteria["exif_software"].lower()
+                if expected_software not in software:
+                    match = False
+                    continue
+
+            if match:
+                return profile_name
+
+        return None

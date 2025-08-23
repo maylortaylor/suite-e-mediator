@@ -1,0 +1,152 @@
+{
+  "canon_80d": {
+    "name": "Canon EOS 80D",
+    "description": "Canon EOS 80D DSLR camera profile",
+    "detection_criteria": {
+      "exif_make": "Canon",
+      "exif_model": "Canon EOS 80D"
+    },
+    "default_settings": {
+      "photo_quality_threshold": 95,
+      "requires_lens_correction": true,
+      "color_profile": "Adobe RGB",
+      "noise_reduction": "medium"
+    },
+    "file_patterns": {
+      "raw_extension": ".CR2",
+      "jpeg_prefix": "IMG_",
+      "video_prefix": "MVI_"
+    }
+  },
+
+  "iphone": {
+    "name": "iPhone Camera",
+    "description": "Apple iPhone camera profile",
+    "detection_criteria": {
+      "exif_make": "Apple",
+      "filename_pattern": "IMG_\\d{4}\\.(jpg|jpeg|heic)"
+    },
+    "default_settings": {
+      "format_conversion_needed": true,
+      "hdr_handling": true,
+      "color_correction": "warm_bias_correction",
+      "noise_reduction": "light"
+    },
+    "file_patterns": {
+      "photo_pattern": "IMG_*.{jpg,jpeg,heic}",
+      "video_pattern": "VID_*.{mov,mp4}"
+    }
+  },
+
+  "dji_action": {
+    "name": "DJI Action Camera",
+    "description": "DJI Action camera profile",
+    "detection_criteria": {
+      "exif_make": "DJI",
+      "filename_pattern": "DJI_\\d{4}\\.(jpg|mp4)"
+    },
+    "default_settings": {
+      "wide_angle_correction": true,
+      "color_grading": "vibrant_enhancement",
+      "stabilization_cleanup": true,
+      "noise_reduction": "medium"
+    },
+    "file_patterns": {
+      "photo_pattern": "DJI_*.jpg",
+      "video_pattern": "DJI_*.mp4"
+    }
+  },
+
+  "android": {
+    "name": "Android Phone",
+    "description": "Generic Android phone camera profile",
+    "detection_criteria": {
+      "exif_software": "android",
+      "variable_quality": true
+    },
+    "default_settings": {
+      "quality_normalization": true,
+      "color_standardization": true,
+      "compression_repair": true,
+      "noise_reduction": "adaptive"
+    },
+    "file_patterns": {
+      "photo_pattern": "*.{jpg,jpeg}",
+      "video_pattern": "*.mp4"
+    }
+  },
+
+  "sony_a6_series": {
+    "name": "Sony Alpha A6xxx Series",
+    "description": "Sony A6000, A6300, A6400, A6500, A6600 mirrorless camera profile",
+    "detection_criteria": {
+      "exif_make": "SONY",
+      "exif_model": "ILCE-6\\d{3}"
+    },
+    "default_settings": {
+      "photo_quality_threshold": 97,
+      "requires_lens_correction": false,
+      "color_profile": "S-Log3",
+      "noise_reduction": "medium",
+      "stabilization_support": true,
+      "high_iso_performance": "excellent",
+      "dynamic_range_optimization": true
+    },
+    "file_patterns": {
+      "raw_extension": ".ARW",
+      "jpeg_prefix": "DSC",
+      "video_prefix": "C",
+      "video_extensions": [".MP4", ".XAVC"]
+    }
+  },
+
+  "sony_a7_series": {
+    "name": "Sony Alpha A7 Series",
+    "description": "Sony A7, A7R, A7S, A7III, A7RIV, A7SIII full-frame mirrorless camera profile",
+    "detection_criteria": {
+      "exif_make": "SONY",
+      "exif_model": "ILCE-7.*"
+    },
+    "default_settings": {
+      "photo_quality_threshold": 98,
+      "requires_lens_correction": false,
+      "color_profile": "S-Log3",
+      "noise_reduction": "light",
+      "stabilization_support": true,
+      "high_iso_performance": "exceptional",
+      "dynamic_range_optimization": true,
+      "full_frame_sensor": true,
+      "professional_grade": true
+    },
+    "file_patterns": {
+      "raw_extension": ".ARW",
+      "jpeg_prefix": "DSC",
+      "video_prefix": "C",
+      "video_extensions": [".MP4", ".XAVC", ".MXF"]
+    }
+  },
+
+  "nikon_dslr": {
+    "name": "Nikon DSLR",
+    "description": "Nikon DSLR cameras (D3500, D5600, D7500, D850, Z series, etc.)",
+    "detection_criteria": {
+      "exif_make": "NIKON CORPORATION",
+      "exif_model": "(D\\d{3,4}|Z \\d+)"
+    },
+    "default_settings": {
+      "photo_quality_threshold": 96,
+      "requires_lens_correction": true,
+      "color_profile": "Adobe RGB",
+      "noise_reduction": "medium",
+      "vr_stabilization": true,
+      "matrix_metering": true,
+      "active_d_lighting": true
+    },
+    "file_patterns": {
+      "raw_extension": ".NEF",
+      "jpeg_prefix": "DSC_",
+      "video_prefix": "DSC_",
+      "video_extensions": [".MOV", ".MP4"]
+    }
+  }
+}

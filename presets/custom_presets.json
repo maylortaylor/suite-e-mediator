@@ -5,7 +5,6 @@
     "last_updated": null,
     "user_presets_count": 0
   },
-
   "_template": {
     "name": "Custom Preset Template",
     "description": "Template for creating new custom presets",
@@ -33,9 +32,12 @@
       }
     },
     "metadata": {
-      "keywords": ["custom", "suite e studios"],
+      "keywords": [
+        "custom",
+        "suite e studios"
+      ],
       "event_type": "custom",
-      "copyright": "© Suite E Studios",
+      "copyright": "\u00a9 Suite E Studios",
       "venue": "Suite E Studios",
       "location": "Historic Warehouse Arts District, St. Petersburg, FL"
     },
