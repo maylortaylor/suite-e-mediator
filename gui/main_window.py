@@ -275,6 +275,23 @@ class MediaProcessorGUI:
             borderwidth=1,
         )
 
+        # Entry state styling to ensure consistent theming
+        self.style.map(
+            "TEntry",
+            fieldbackground=[
+                ("focus", self.theme.get_color("bg_input")),
+                ("active", self.theme.get_color("bg_input")),
+            ],
+            foreground=[
+                ("focus", self.theme.get_color("text_primary")),
+                ("active", self.theme.get_color("text_primary")),
+            ],
+            font=[
+                ("focus", self.theme.get_font("primary")),
+                ("active", self.theme.get_font("primary")),
+            ],
+        )
+
         # Combobox styles
         self.style.configure(
             "TCombobox",
@@ -308,6 +325,11 @@ class MediaProcessorGUI:
             ],
             selectbackground=[("readonly", self.theme.get_color("accent_primary"))],
             selectforeground=[("readonly", self.theme.get_color("text_primary"))],
+            font=[
+                ("readonly", self.theme.get_font("combobox")),
+                ("focus", self.theme.get_font("combobox")),
+                ("active", self.theme.get_font("combobox")),
+            ],
         )
 
         # Scale (slider) styles
@@ -697,7 +719,6 @@ class MediaProcessorGUI:
             self.event_frame,
             textvariable=self.event_name_var,
             width=35,
-            font=self.theme.get_font("primary"),
         )
         self.event_name_entry.grid(
             row=1, column=0, columnspan=2, sticky="w", pady=(5, 10)
