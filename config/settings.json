@@ -59,7 +59,11 @@
       ".tif",
       ".webp",
       ".heic",
-      ".heif"
+      ".heif",
+      ".bmp",
+      ".gif",
+      ".jfif",
+      ".avif"
     ],
     "supported_video_formats": [
       ".mp4",
@@ -68,7 +72,13 @@
       ".mkv",
       ".m4v",
       ".mts",
-      ".m2ts"
+      ".m2ts",
+      ".webm",
+      ".3gp",
+      ".flv",
+      ".wmv",
+      ".mpg",
+      ".mpeg"
     ],
     "supported_raw_formats": [
       ".cr2",
@@ -79,7 +89,13 @@
       ".dng",
       ".raf",
       ".orf",
-      ".rw2"
+      ".rw2",
+      ".raw",
+      ".rw",
+      ".iiq",
+      ".3fr",
+      ".fff",
+      ".srw"
     ],
     "max_file_size_mb": 1000,
     "skip_corrupted_files": true

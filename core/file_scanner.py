@@ -57,10 +57,19 @@ class FileScanner:
         # Get supported formats from config
         self.supported_photo_formats = config_manager.get_app_setting(
             "supported_photo_formats",
-            [".jpg", ".jpeg", ".cr2", ".cr3", ".heic", ".png"],
+            [".jpg", ".jpeg", ".png", ".heic"],
+        )
+        self.supported_raw_formats = config_manager.get_app_setting(
+            "supported_raw_formats",
+            [".cr2", ".cr3", ".nef", ".arw", ".dng"],
         )
         self.supported_video_formats = config_manager.get_app_setting(
             "supported_video_formats", [".mp4", ".mov", ".avi"]
+        )
+
+        # Combine photo and RAW formats for easier checking
+        self.all_photo_formats = (
+            self.supported_photo_formats + self.supported_raw_formats
         )
 
         # Cache for device profiles
@@ -72,7 +81,8 @@ class FileScanner:
 
         logger.info(
             f"File scanner initialized. Supported formats: "
-            f"{len(self.supported_photo_formats)} photo, "
+            f"{len(self.supported_photo_formats)} image, "
+            f"{len(self.supported_raw_formats)} raw, "
             f"{len(self.supported_video_formats)} video"
         )
 
@@ -200,10 +210,9 @@ class FileScanner:
     def _determine_media_type(self, extension: str) -> str:
         """Determine media type from file extension."""
         if extension in self.supported_photo_formats:
-            if extension in [".cr2", ".cr3", ".arw", ".nef"]:
-                return "raw"
-            else:
-                return "photo"
+            return "photo"
+        elif extension in self.supported_raw_formats:
+            return "raw"
         elif extension in self.supported_video_formats:
             return "video"
         else:
