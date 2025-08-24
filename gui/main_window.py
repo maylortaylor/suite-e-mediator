@@ -1387,7 +1387,7 @@ class MediaProcessorGUI:
             variables_frame,
             height=20,
             width=65,
-            font=self.theme.get_font("secondary"),
+            font=self.theme.get_font("small"),  # Use theme's small font
             wrap=tk.WORD,
             state=tk.NORMAL,
             bg=self.theme.get_color("bg_input"),
@@ -1418,32 +1418,77 @@ class MediaProcessorGUI:
         variables_frame.grid_rowconfigure(1, weight=1)
 
         # Add detailed variable descriptions
-        variable_descriptions = """• {event_name} - The name of your event or photo session
-  Example: "Wedding_Reception" or "Birthday_Party"
+        variable_descriptions = """EVENT & CONTENT VARIABLES:
+• {event_name} - Name of the event
+  Example: "Final_Friday_March_2024"
 
-• {date} - Current date in YYYY-MM-DD format
-  Example: "2025-08-21"
+• {artist_names} - Artist or band names  
+  Example: "The_Local_Band" or "Unknown_Artist" (fallback)
 
-• {date1} - Current date in MM.DD.YYYY format (US style)
-  Example: "08.21.2025"
+• {sequence} - Sequential number for files (use :03d for zero-padding)
+  Example: "001", "002", "003" when using {sequence:03d}
 
-• {date2} - Current date in YYYY.MM.DD format (ISO style with dots)
-  Example: "2025.08.21"
+DATE & TIME VARIABLES:
+• {date} - Date in MM.dd.YYYY format
+  Example: "08.23.2025" 
 
-• {datetime} - Full date and time stamp in MM.DD.YYYY_HH-MM-SS format
-  Example: "08.21.2025_14-30-25"
+• {date1} - Date in MM.dd.YYYY format (same as {date})
+  Example: "08.23.2025"
 
-• {artist_names} - Names of photographers/videographers (if provided)
-  Example: "John_Smith" or "Jane_Doe_Mike_Wilson"
+• {date2} - Date in YYYY.MM.dd format  
+  Example: "2025.08.23"
 
-• {device} - Camera or device name extracted from metadata
-  Example: "Canon_EOS_R5" or "iPhone_15_Pro"
+• {datetime} - Full date and time in MM.dd.YYYY_HH-MM-SS format
+  Example: "08.23.2025_20-30-45"
 
-• {media_type} - Type of media file being processed
+• {time} - Time in HH-MM-SS format
+  Example: "20-30-45"
+
+• {dayofweek} - Day of the week
+  Example: "Friday"
+
+• {date2digit} - Month as 2-digit number (01-12)
+  Example: "08" for August
+
+• {month_name} - Full month name
+  Example: "August"
+
+LOCATION VARIABLES:
+• {location} - Full venue name
+  Example: "Suite E Studios"
+
+• {venue} - Full venue name (same as {location})
+  Example: "Suite E Studios"
+
+• {venue_short} - Abbreviated venue name
+  Example: "SuiteE"
+
+• {city} - City name
+  Example: "St Petersburg"
+
+MEDIA VARIABLES:
+• {media_type} - Type of media file
   Example: "photo", "video", "raw"
 
-• {sequence} - Sequential number for file ordering (use :03d for zero-padding)
-  Example: "001", "002", "003" (when using {sequence:03d})"""
+• {device} - Camera or device type from metadata
+  Example: "canon_80d", "iphone12", "dji"
+
+• {resolution} - Image/video resolution
+  Example: "1080p", "4K", "720p"
+
+• {original_name} - Original filename without extension
+  Example: "IMG_1234"
+
+TEMPLATE EXAMPLES:
+{event_name}_{date}_{artist_names}_{sequence:03d}
+→ "Final_Friday_March_2024_08.23.2025_The_Local_Band_001.jpg"
+
+{venue_short}_{date2}_{time}_{resolution}  
+→ "SuiteE_2025.08.23_20-30-45_1080p.mp4"
+
+{dayofweek}_{event_name}_{device}_{sequence}
+→ "Friday_Final_Friday_March_2024_canon_80d_1.jpg"
+"""
 
         variables_text.insert(tk.END, variable_descriptions)
         variables_text.config(state=tk.DISABLED)  # Make read-only

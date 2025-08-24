@@ -155,20 +155,27 @@ User interface components for the Suite E Studios Media Processor. Designed for 
 ```json
 {
   "event_name": "Final Friday March 2024",
-  "datetime": "2024-03-29_19-30-45",
-  "date": "2024-03-29",
-  "time": "19-30-45",
-  "dayofweek": "Friday",
-  "date2digit": "03",
-  "month_name": "March",
-  "location": "Suite E Studios",
-  "city": "St Petersburg",
   "artist_names": "The Local Band",
   "sequence": "001, 002, 003...",
-  "media_type": "photo, video",
-  "device": "Canon80D, iPhone12, DJI",
-  "resolution": "1080p, 4K",
-  "original_name": "[original filename]"
+  
+  "date": "08.23.2025",
+  "date1": "08.23.2025", 
+  "date2": "2025.08.23",
+  "datetime": "08.23.2025_20-30-45",
+  "time": "20-30-45",
+  "dayofweek": "Friday",
+  "date2digit": "08",
+  "month_name": "August",
+  
+  "location": "Suite E Studios",
+  "venue": "Suite E Studios",
+  "venue_short": "SuiteE", 
+  "city": "St Petersburg",
+  
+  "media_type": "photo, video, raw",
+  "device": "canon_80d, iphone12, dji",
+  "resolution": "1080p, 4K, 720p",
+  "original_name": "IMG_1234"
 }
 ```
 

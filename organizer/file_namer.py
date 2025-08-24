@@ -252,6 +252,9 @@ class FileNamer:
     def sanitize_filename(self, filename: str) -> str:
         """Sanitize filename to be filesystem-safe, especially for Windows."""
 
+        # Define separator characters that should be preserved (not surrounded by underscores)
+        separators = ",.-+()[]"
+
         # Replace Windows-invalid characters with underscores
         invalid_chars = '<>:"/\\|?*'
         for char in invalid_chars:
@@ -259,6 +262,13 @@ class FileNamer:
 
         # Replace spaces with underscores for consistency
         filename = filename.replace(" ", "_")
+
+        # Smart cleanup of underscores around separators
+        for separator in separators:
+            # Remove underscore before separator: "_," becomes ","
+            filename = filename.replace(f"_{separator}", separator)
+            # Remove underscore after separator: ",_" becomes ","
+            filename = filename.replace(f"{separator}_", separator)
 
         # Remove multiple consecutive underscores
         while "__" in filename:

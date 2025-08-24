@@ -48,7 +48,8 @@
       "title": ["Segoe UI", 24, "bold"],
       "subtitle": ["Segoe UI", 12],
       "label": ["Segoe UI", 16],
-      "combobox": ["Segoe UI", 20]
+      "combobox": ["Segoe UI", 20],
+      "small": ["SF Pro Text", 10]
     }
   },
   "light": {
@@ -100,7 +101,8 @@
       "title": ["Segoe UI", 24, "bold"],
       "subtitle": ["Segoe UI", 12],
       "label": ["Segoe UI", 16],
-      "combobox": ["Segoe UI", 20]
+      "combobox": ["Segoe UI", 20],
+      "small": ["SF Pro Text", 10]
     }
   },
   "midnight_blue": {
@@ -152,7 +154,8 @@
       "title": ["Segoe UI", 24, "bold"],
       "subtitle": ["Segoe UI", 12],
       "label": ["Segoe UI", 16],
-      "combobox": ["Segoe UI", 20]
+      "combobox": ["Segoe UI", 20],
+      "small": ["SF Pro Text", 10]
     }
   }
 }

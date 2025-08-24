@@ -64,12 +64,11 @@ def generate_folder_metadata(folder_path, contents)
 **Purpose**: Central registry of all available naming variables
 
 **Variable Categories**:
-- [ ] **Event Information**: `{event_name}`, `{event_type}`, `{venue}`
-- [ ] **Date/Time**: `{date}`, `{datetime}`, `{dayofweek}`, `{time}`
-- [ ] **Location**: `{location}`, `{city}`, `{state}`, `{venue_short}`
-- [ ] **People**: `{artist_names}`, `{photographer}`, `{attendees}`
-- [ ] **Technical**: `{device}`, `{resolution}`, `{media_type}`, `{format}`
-- [ ] **Sequence**: `{sequence}`, `{total_files}`, `{batch_number}`
+- [ ] **Event Information**: `{event_name}`, `{artist_names}`
+- [ ] **Date/Time**: `{date}`, `{date1}`, `{date2}`, `{datetime}`, `{dayofweek}`, `{time}`, `{date2digit}`, `{month_name}`
+- [ ] **Location**: `{location}`, `{venue}`, `{venue_short}`, `{city}`
+- [ ] **Technical**: `{device}`, `{resolution}`, `{media_type}`, `{original_name}`
+- [ ] **Sequence**: `{sequence}`
 
 ### duplicate_handler.py - Duplicate Detection
 **Purpose**: Identify and handle duplicate or similar media files
@@ -182,10 +181,28 @@ Production_Workflow/
   },
   "datetime": {
     "description": "Full date and time",
-    "example": "2024-03-29_19-30-45",
-    "source": "file_metadata",
-    "format_options": ["YYYY-MM-DD_HH-mm-ss", "YYYYMMDD_HHmmss"],
+    "example": "08.23.2025_20-30-45",
+    "source": "system",
+    "format_options": ["MM.dd.YYYY_HH-mm-ss"],
     "fallback": "system_time"
+  },
+  "date": {
+    "description": "Date in MM.dd.YYYY format",
+    "example": "08.23.2025",
+    "source": "system",
+    "format_options": ["MM.dd.YYYY"]
+  },
+  "date1": {
+    "description": "Date in MM.dd.YYYY format (same as date)",
+    "example": "08.23.2025",
+    "source": "system",
+    "format_options": ["MM.dd.YYYY"]
+  },
+  "date2": {
+    "description": "Date in YYYY.MM.dd format",
+    "example": "2025.08.23",
+    "source": "system",
+    "format_options": ["YYYY.MM.dd"]
   },
   "artist_names": {
     "description": "Performing artist or band name",
@@ -201,16 +218,16 @@ Production_Workflow/
 ### Naming Template Examples
 ```
 Template: "{event_name}_{date}_{artist_names}_{sequence:03d}"
-Result:   "Final_Friday_March_2024_2024-03-29_The_Local_Band_001.jpg"
+Result:   "Final_Friday_March_2024_08.23.2025_The_Local_Band_001.jpg"
 
 Template: "{dayofweek}_{event_name}_{device}_{sequence}"
-Result:   "Friday_Final_Friday_March_2024_Canon80D_1.jpg"
+Result:   "Friday_Final_Friday_March_2024_canon_80d_1.jpg"
 
 Template: "{date2digit}-{event_name:slug}-{media_type}-{sequence:04d}"
-Result:   "03-final-friday-march-2024-photo-0001.jpg"
+Result:   "08-final-friday-march-2024-photo-0001.jpg"
 
-Template: "{venue_short}_{date}_{time}_{resolution}"
-Result:   "SuiteE_2024-03-29_19-30-45_1080p.mp4"
+Template: "{venue_short}_{date2}_{time}_{resolution}"
+Result:   "SuiteE_2025.08.23_20-30-45_1080p.mp4"
 ```
 
 ### Advanced Template Features

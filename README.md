@@ -100,17 +100,36 @@ suite-e-media-processor/
 ## 🏷️ Dynamic Naming System
 
 Customizable filename templates using variables:
-- `{event_name}` - Final Friday March 2024
-- `{datetime}` - 2024-03-29_19-30-45
-- `{date}` - 2024-03-29
-- `{dayofweek}` - Friday
-- `{date2digit}` - 03 (for March)
-- `{location}` - Suite E Studios
-- `{city}` - St Petersburg
-- `{artist_names}` - Band Name or DJ Name
 
-**Example**: `{event_name}_{date}_{artist_names}_001.jpg`
-**Result**: `Final_Friday_March_2024_2024-03-29_The_Local_Band_001.jpg`
+### Event & Content Variables
+- `{event_name}` - Final Friday March 2024
+- `{artist_names}` - The Local Band
+- `{sequence}` - 001, 002, 003... (sequential numbering)
+
+### Date & Time Variables  
+- `{date}` - 08.23.2025 (MM.dd.YYYY format)
+- `{date1}` - 08.23.2025 (MM.dd.YYYY format)
+- `{date2}` - 2025.08.23 (YYYY.MM.dd format)
+- `{datetime}` - 08.23.2025_20-30-45 (MM.dd.YYYY_HH-MM-SS)
+- `{time}` - 20-30-45 (HH-MM-SS)
+- `{dayofweek}` - Friday
+- `{date2digit}` - 08 (month as 2-digit number)
+- `{month_name}` - August
+
+### Location Variables
+- `{location}` - Suite E Studios (full venue name)
+- `{venue}` - Suite E Studios (same as location)
+- `{venue_short}` - SuiteE (abbreviated venue name)
+- `{city}` - St Petersburg
+
+### Media Variables
+- `{media_type}` - photo, video, raw
+- `{device}` - canon_80d, iphone12, dji
+- `{resolution}` - 1080p, 4K, 720p
+- `{original_name}` - IMG_1234 (original filename without extension)
+
+**Example**: `{event_name}_{date}_{artist_names}_{sequence:03d}.jpg`
+**Result**: `Final_Friday_March_2024_08.23.2025_The_Local_Band_001.jpg`
 
 ## 🎨 Processing Presets
 
