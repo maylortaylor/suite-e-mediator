@@ -26,6 +26,7 @@ class ProcessingPreset:
     audio_settings: Dict[str, Any]
     raw_settings: Dict[str, Any]
     organization: Dict[str, Any]
+    metadata_settings: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -111,14 +112,18 @@ class ConfigManager:
 
         # Photo settings
         image_config = processing.get("image", {})
+        watermark_config = json_config.get("watermark", {})
         photo_settings = {
             "quality": image_config.get("jpeg_quality", 85),
-            "format": "JPEG",
-            "enhance": image_config.get("enhancement_level", "medium") != "none",
-            "watermark": json_config.get("watermark", {}).get("enabled", False),
-            "watermark_style": json_config.get("watermark", {}).get(
-                "style", "standard"
-            ),
+            "format": image_config.get("format", "JPEG"),
+            "enhance": image_config.get("enhancement_level", "medium") != "none"
+            and image_config.get("enhance", True),
+            "watermark": watermark_config.get("enabled", False),
+            "watermark_style": watermark_config.get("style", "standard"),
+            "watermark_file": watermark_config.get("file", ""),
+            "watermark_position": watermark_config.get("position", "bottom_right"),
+            "watermark_opacity": watermark_config.get("opacity", 0.3),
+            "watermark_margin": watermark_config.get("margin", 100),
         }
 
         # Handle resolution settings
@@ -140,53 +145,48 @@ class ConfigManager:
         # Video settings
         video_config = processing.get("video", {})
         video_settings = {
-            "format": "MP4",
-            "codec": "h264",
-            "fps": 30,
+            "format": video_config.get("format", "MP4"),
+            "codec": video_config.get("codec", "h264"),
+            "fps": video_config.get("fps", 30),
+            "bitrate": video_config.get("bitrate", "3000k"),
         }
 
-        if video_config.get("platform") == "instagram":
-            video_settings.update(
-                {
-                    "max_resolution": [1080, 1080],
-                    "bitrate": "3000k",
-                }
-            )
+        # Handle video resolution
+        if video_config.get("max_resolution"):
+            video_settings["max_resolution"] = video_config["max_resolution"]
+        elif video_config.get("platform") == "instagram":
+            video_settings["max_resolution"] = [1080, 1080]
         elif video_config.get("quality_level") == "high":
-            video_settings.update(
-                {
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "5000k",
-                }
-            )
+            video_settings["max_resolution"] = [1920, 1080]
+            video_settings["bitrate"] = "5000k"
         else:
-            video_settings.update(
-                {
-                    "max_resolution": [1920, 1080],
-                    "bitrate": "3500k",
-                }
-            )
+            video_settings["max_resolution"] = [1920, 1080]
 
-        # Audio settings (with defaults)
+        # Audio settings - read from JSON with defaults
+        audio_config = processing.get("audio", {})
         audio_settings = {
-            "codec": "aac",
-            "bitrate": "192k",
-            "sample_rate": 44100,
-            "channels": 2,
-            "volume_normalization": True,
-            "noise_reduction": "medium",
-            "enable_loudness_normalization": True,
-            "target_lufs": -23.0,
-            "max_peak": -1.0,
+            "codec": audio_config.get("codec", "aac"),
+            "bitrate": audio_config.get("bitrate", "320k"),
+            "sample_rate": audio_config.get("sample_rate", 44100),
+            "channels": audio_config.get("channels", 2),
+            "volume_normalization": audio_config.get("volume_normalization", True),
+            "enable_loudness_normalization": audio_config.get(
+                "enable_loudness_normalization", True
+            ),
+            "target_lufs": audio_config.get("target_lufs", -23.0),
+            "max_peak": audio_config.get("max_peak", -1.0),
+            "noise_reduction": audio_config.get("noise_reduction", "light"),
         }
 
-        # RAW settings
+        # RAW settings - read from JSON with defaults
         raw_config = processing.get("raw", {})
         raw_settings = {
             "convert_to": raw_config.get("output_format", "JPEG"),
             "quality": raw_config.get("quality", 90),
-            "enhance": True,
-            "preserve_original": preset_name in ["archive", "final_friday"],
+            "enhance": raw_config.get("enhance", True),
+            "preserve_original": raw_config.get(
+                "preserve_original", preset_name in ["archive", "final_friday"]
+            ),
         }
 
         # Organization settings
@@ -201,6 +201,11 @@ class ConfigManager:
             ),
         }
 
+        # Metadata settings - read from JSON if present
+        metadata_settings = None
+        if "metadata" in json_config:
+            metadata_settings = json_config["metadata"]
+
         return ProcessingPreset(
             name=name,
             description=description,
@@ -209,6 +214,7 @@ class ConfigManager:
             audio_settings=audio_settings,
             raw_settings=raw_settings,
             organization=organization,
+            metadata_settings=metadata_settings,
         )
 
     def _load_device_profiles(self):
@@ -463,7 +469,7 @@ class ConfigManager:
         return validation_result
 
     def update_preset(self, preset_name: str, preset: ProcessingPreset):
-        """Update an existing preset.
+        """Update an existing preset and save to JSON file.
 
         Args:
             preset_name: Name of the preset to update
@@ -471,12 +477,14 @@ class ConfigManager:
         """
         if preset_name in self._presets:
             self._presets[preset_name] = preset
+            # Save to JSON file for persistence
+            self.save_preset_to_json(preset_name, preset, "custom")
             logger.info(f"Updated preset: {preset_name}")
         else:
             raise ValueError(f"Preset '{preset_name}' not found")
 
     def add_preset(self, preset_name: str, preset: ProcessingPreset):
-        """Add a new preset.
+        """Add a new preset and save to JSON file.
 
         Args:
             preset_name: Name for the new preset
@@ -486,6 +494,8 @@ class ConfigManager:
             raise ValueError(f"Preset '{preset_name}' already exists")
 
         self._presets[preset_name] = preset
+        # Save to JSON file for persistence
+        self.save_preset_to_json(preset_name, preset, "custom")
         logger.info(f"Added new preset: {preset_name}")
 
     def delete_preset(self, preset_name: str):
@@ -501,7 +511,55 @@ class ConfigManager:
             raise ValueError("Cannot delete the last preset")
 
         del self._presets[preset_name]
+        # Remove from JSON file for persistence
+        self.delete_preset_from_json(preset_name, "custom")
         logger.info(f"Deleted preset: {preset_name}")
+
+    def delete_preset_from_json(self, preset_name: str, preset_type: str = "custom"):
+        """Delete a preset from the appropriate JSON file.
+
+        Args:
+            preset_name: The name/key of the preset to delete
+            preset_type: Type of preset ('custom', 'event', 'platform', 'quality')
+        """
+        file_mapping = {
+            "custom": "custom_presets.json",
+            "event": "event_presets.json",
+            "platform": "platform_presets.json",
+            "quality": "quality_presets.json",
+        }
+
+        preset_file = (
+            self.config_dir.parent
+            / "presets"
+            / file_mapping.get(preset_type, "custom_presets.json")
+        )
+
+        if not preset_file.exists():
+            logger.warning(f"Preset file {preset_file} does not exist")
+            return
+
+        # Load existing presets
+        try:
+            with open(preset_file, "r") as f:
+                existing_presets = json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load existing presets from {preset_file}: {e}")
+            return
+
+        # Remove the preset if it exists
+        if preset_name in existing_presets:
+            del existing_presets[preset_name]
+
+            # Save back to file
+            try:
+                with open(preset_file, "w") as f:
+                    json.dump(existing_presets, f, indent=2)
+                logger.info(f"Deleted preset '{preset_name}' from {preset_file}")
+            except Exception as e:
+                logger.error(f"Failed to save presets to {preset_file}: {e}")
+        else:
+            logger.warning(f"Preset '{preset_name}' not found in {preset_file}")
 
     def save_preset_to_json(
         self, preset_name: str, preset: ProcessingPreset, preset_type: str = "custom"
@@ -551,7 +609,7 @@ class ConfigManager:
 
     def _convert_preset_to_json(self, preset: ProcessingPreset) -> Dict[str, Any]:
         """Convert ProcessingPreset object back to JSON format."""
-        return {
+        json_preset = {
             "name": preset.name,
             "description": preset.description,
             "processing": {
@@ -563,16 +621,51 @@ class ConfigManager:
                         else "none"
                     ),
                     "resize_to": preset.photo_settings.get("max_resolution"),
+                    "format": preset.photo_settings.get("format", "JPEG"),
+                    "enhance": preset.photo_settings.get("enhance", True),
                 },
-                "video": {"quality_level": "standard", "platform": "website"},
+                "video": {
+                    "max_resolution": preset.video_settings.get("max_resolution"),
+                    "bitrate": preset.video_settings.get("bitrate", "3000k"),
+                    "fps": preset.video_settings.get("fps", 30),
+                    "codec": preset.video_settings.get("codec", "h264"),
+                    "format": preset.video_settings.get("format", "MP4"),
+                },
+                "audio": {
+                    "codec": preset.audio_settings.get("codec", "aac"),
+                    "bitrate": preset.audio_settings.get("bitrate", "320k"),
+                    "sample_rate": preset.audio_settings.get("sample_rate", 44100),
+                    "channels": preset.audio_settings.get("channels", 2),
+                    "volume_normalization": preset.audio_settings.get(
+                        "volume_normalization", True
+                    ),
+                    "enable_loudness_normalization": preset.audio_settings.get(
+                        "enable_loudness_normalization", True
+                    ),
+                    "target_lufs": preset.audio_settings.get("target_lufs", -23.0),
+                    "max_peak": preset.audio_settings.get("max_peak", -1.0),
+                    "noise_reduction": preset.audio_settings.get(
+                        "noise_reduction", "light"
+                    ),
+                },
                 "raw": {
                     "output_format": preset.raw_settings.get("convert_to", "JPEG"),
                     "quality": preset.raw_settings.get("quality", 90),
+                    "enhance": preset.raw_settings.get("enhance", True),
+                    "preserve_original": preset.raw_settings.get(
+                        "preserve_original", False
+                    ),
                 },
             },
             "watermark": {
                 "enabled": preset.photo_settings.get("watermark", False),
                 "style": preset.photo_settings.get("watermark_style", "standard"),
+                "file": preset.photo_settings.get("watermark_file", ""),
+                "position": preset.photo_settings.get(
+                    "watermark_position", "bottom_right"
+                ),
+                "opacity": preset.photo_settings.get("watermark_opacity", 0.3),
+                "margin": preset.photo_settings.get("watermark_margin", 100),
             },
             "output": {
                 "create_subdirectories": preset.organization.get(
@@ -586,6 +679,12 @@ class ConfigManager:
                 ),
             },
         }
+
+        # Add metadata settings if present
+        if preset.metadata_settings:
+            json_preset["metadata"] = preset.metadata_settings
+
+        return json_preset
 
     def get_app_setting(self, key: str, default=None):
         """Get application setting by key."""

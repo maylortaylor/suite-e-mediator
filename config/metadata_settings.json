@@ -1,0 +1,224 @@
+{
+  "metadata_profiles": {
+    "standard": {
+      "name": "Standard Suite E Profile",
+      "description": "Standard metadata profile for Suite E Studios events",
+      "add_metadata": {
+        "artist": "",
+        "copyright": "© Suite E Studios",
+        "creator": "Suite E Studios",
+        "rights": "© Suite E Studios",
+        "source": "Suite E Studios Media Processor",
+        "software": "Suite E Studios Media Processor v1.0",
+        "comment": "Processed by Suite E Studios",
+        "keywords": "suite e studios, live music, event photography",
+        "subject": "",
+        "title": "",
+        "description": "",
+        "location": "",
+        "city": "",
+        "state": "",
+        "country": "USA",
+        "gps_coordinates": "",
+        "event_name": "",
+        "event_date": "",
+        "venue": "",
+        "photographer": "",
+        "camera_settings": {
+          "preserve_original": true,
+          "add_processing_info": true
+        }
+      },
+      "remove_metadata": {
+        "personal_info": true,
+        "gps_location": false,
+        "camera_serial": true,
+        "lens_serial": true,
+        "personal_keywords": true,
+        "user_comments": false,
+        "rating": false,
+        "color_labels": false,
+        "face_tags": true,
+        "private_exif": [
+          "MakerNote.SerialNumber",
+          "EXIF.CameraOwnerName",
+          "EXIF.OwnerName",
+          "EXIF.CameraSerial",
+          "XMP.aux.SerialNumber"
+        ]
+      }
+    },
+    "social_media": {
+      "name": "Social Media Optimized",
+      "description": "Metadata profile optimized for social media sharing",
+      "add_metadata": {
+        "artist": "",
+        "copyright": "© Suite E Studios",
+        "creator": "Suite E Studios",
+        "rights": "© Suite E Studios",
+        "source": "Suite E Studios",
+        "software": "Suite E Studios Media Processor",
+        "comment": "Follow @SuiteEStudios",
+        "keywords": "suite e studios, live music, concert, event",
+        "subject": "",
+        "title": "",
+        "description": "Live music event captured by Suite E Studios",
+        "location": "",
+        "city": "",
+        "state": "",
+        "country": "USA",
+        "event_name": "",
+        "event_date": "",
+        "venue": "",
+        "photographer": "Suite E Studios",
+        "camera_settings": {
+          "preserve_original": false,
+          "add_processing_info": false
+        }
+      },
+      "remove_metadata": {
+        "personal_info": true,
+        "gps_location": true,
+        "camera_serial": true,
+        "lens_serial": true,
+        "personal_keywords": true,
+        "user_comments": true,
+        "rating": true,
+        "color_labels": true,
+        "face_tags": true,
+        "private_exif": [
+          "MakerNote",
+          "EXIF.CameraOwnerName",
+          "EXIF.OwnerName",
+          "EXIF.CameraSerial",
+          "EXIF.LensSerialNumber",
+          "XMP.aux.SerialNumber",
+          "GPS.GPSLatitude",
+          "GPS.GPSLongitude",
+          "GPS.GPSAltitude"
+        ]
+      }
+    },
+    "archive": {
+      "name": "Archive/Backup Profile",
+      "description": "Full metadata preservation for archival purposes",
+      "add_metadata": {
+        "artist": "",
+        "copyright": "© Suite E Studios",
+        "creator": "Suite E Studios",
+        "rights": "© Suite E Studios",
+        "source": "Suite E Studios Media Processor",
+        "software": "Suite E Studios Media Processor v1.0",
+        "comment": "Archived by Suite E Studios",
+        "keywords": "suite e studios, archive, live music, event photography",
+        "subject": "",
+        "title": "",
+        "description": "Professional event photography archive",
+        "location": "",
+        "city": "",
+        "state": "",
+        "country": "USA",
+        "gps_coordinates": "",
+        "event_name": "",
+        "event_date": "",
+        "venue": "",
+        "photographer": "",
+        "archive_info": {
+          "archive_date": "",
+          "archive_version": "1.0",
+          "processing_history": true
+        },
+        "camera_settings": {
+          "preserve_original": true,
+          "add_processing_info": true
+        }
+      },
+      "remove_metadata": {
+        "personal_info": false,
+        "gps_location": false,
+        "camera_serial": false,
+        "lens_serial": false,
+        "personal_keywords": false,
+        "user_comments": false,
+        "rating": false,
+        "color_labels": false,
+        "face_tags": false,
+        "private_exif": []
+      }
+    },
+    "client_delivery": {
+      "name": "Client Delivery",
+      "description": "Clean metadata for client deliverables",
+      "add_metadata": {
+        "artist": "",
+        "copyright": "© Suite E Studios",
+        "creator": "Suite E Studios",
+        "rights": "© Suite E Studios",
+        "source": "Suite E Studios",
+        "software": "Suite E Studios Media Processor",
+        "comment": "",
+        "keywords": "professional photography, live music",
+        "subject": "",
+        "title": "",
+        "description": "",
+        "location": "",
+        "city": "",
+        "state": "",
+        "country": "",
+        "event_name": "",
+        "event_date": "",
+        "venue": "",
+        "photographer": "Suite E Studios",
+        "camera_settings": {
+          "preserve_original": false,
+          "add_processing_info": false
+        }
+      },
+      "remove_metadata": {
+        "personal_info": true,
+        "gps_location": true,
+        "camera_serial": true,
+        "lens_serial": true,
+        "personal_keywords": true,
+        "user_comments": true,
+        "rating": true,
+        "color_labels": true,
+        "face_tags": true,
+        "private_exif": [
+          "MakerNote",
+          "EXIF.CameraOwnerName",
+          "EXIF.OwnerName",
+          "EXIF.CameraSerial",
+          "EXIF.LensSerialNumber",
+          "XMP.aux.SerialNumber",
+          "GPS.GPSLatitude",
+          "GPS.GPSLongitude",
+          "GPS.GPSAltitude",
+          "EXIF.UserComment"
+        ]
+      }
+    }
+  },
+  "field_mappings": {
+    "artist": "XMP.dc.creator",
+    "copyright": "EXIF.Copyright",
+    "creator": "XMP.dc.creator",
+    "rights": "XMP.dc.rights",
+    "source": "XMP.dc.source",
+    "software": "EXIF.Software",
+    "comment": "EXIF.ImageDescription",
+    "keywords": "XMP.dc.subject",
+    "subject": "XMP.dc.subject",
+    "title": "XMP.dc.title",
+    "description": "XMP.dc.description",
+    "location": "XMP.iptc.Location",
+    "city": "XMP.iptc.City",
+    "state": "XMP.iptc.State",
+    "country": "XMP.iptc.Country",
+    "gps_coordinates": "GPS",
+    "event_name": "XMP.dc.subject",
+    "event_date": "XMP.xmp.CreateDate",
+    "venue": "XMP.iptc.Location",
+    "photographer": "EXIF.Artist"
+  }
+}

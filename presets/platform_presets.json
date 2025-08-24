@@ -7,23 +7,49 @@
         "enhancement_level": "medium",
         "target_platform": "instagram",
         "maintain_aspect": false,
-        "jpeg_quality": 82
+        "jpeg_quality": 82,
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "social_media",
         "platform": "instagram",
-        "quality_level": "standard"
+        "quality_level": "standard",
+        "max_resolution": [
+          1080,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
       },
       "raw": {
         "preset": "web_optimized",
         "output_format": "JPEG",
-        "quality": 85
+        "quality": 85,
+        "enhance": true,
+        "preserve_original": false
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
       }
     },
     "watermark": {
       "enabled": true,
       "style": "social_media",
-      "position": "bottom_right"
+      "position": "bottom_right",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100
     },
     "output": {
       "create_subdirectories": true,
@@ -31,7 +57,6 @@
       "filename_template": "{event_name}_social_{counter:03d}"
     }
   },
-
   "instagram_feed": {
     "name": "Instagram Feed",
     "description": "Square format optimized for Instagram feed posts",
@@ -41,25 +66,57 @@
         "target_platform": "instagram",
         "maintain_aspect": false,
         "jpeg_quality": 80,
-        "resize_to": [1080, 1080]
+        "resize_to": [
+          1080,
+          1080
+        ],
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "social_media",
         "platform": "instagram",
-        "quality_level": "standard"
+        "quality_level": "standard",
+        "max_resolution": [
+          1080,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
+      },
+      "raw": {
+        "quality": 90,
+        "enhance": true,
+        "preserve_original": false
       }
     },
     "watermark": {
       "enabled": true,
       "style": "social_media",
-      "position": "bottom_right"
+      "position": "bottom_right",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100
     },
     "output": {
       "directory_structure": "instagram/feed",
-      "filename_template": "ig_feed_{event_name}_{counter:03d}"
+      "filename_template": "ig_feed_{event_name}_{counter:03d}",
+      "create_subdirectories": true
     }
   },
-
   "instagram_stories": {
     "name": "Instagram Stories",
     "description": "Vertical format optimized for Instagram Stories",
@@ -69,25 +126,57 @@
         "target_platform": "instagram_stories",
         "maintain_aspect": false,
         "jpeg_quality": 85,
-        "resize_to": [1080, 1920]
+        "resize_to": [
+          1080,
+          1920
+        ],
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "social_media",
         "platform": "instagram_stories",
-        "quality_level": "standard"
+        "quality_level": "standard",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
+      },
+      "raw": {
+        "quality": 90,
+        "enhance": true,
+        "preserve_original": false
       }
     },
     "watermark": {
       "enabled": true,
       "style": "social_media",
-      "position": "bottom_right"
+      "position": "bottom_right",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100
     },
     "output": {
       "directory_structure": "instagram/stories",
-      "filename_template": "ig_story_{event_name}_{counter:03d}"
+      "filename_template": "ig_story_{event_name}_{counter:03d}",
+      "create_subdirectories": true
     }
   },
-
   "facebook": {
     "name": "Facebook",
     "description": "Optimized for Facebook posts and sharing",
@@ -96,25 +185,54 @@
         "enhancement_level": "medium",
         "target_platform": "facebook",
         "maintain_aspect": true,
-        "jpeg_quality": 88
+        "jpeg_quality": 88,
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "social_media",
         "platform": "facebook",
-        "quality_level": "standard"
+        "quality_level": "standard",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
+      },
+      "raw": {
+        "quality": 90,
+        "enhance": true,
+        "preserve_original": false
       }
     },
     "watermark": {
       "enabled": true,
       "style": "standard",
-      "position": "bottom_right"
+      "position": "bottom_right",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100
     },
     "output": {
       "directory_structure": "facebook",
-      "filename_template": "fb_{event_name}_{counter:03d}"
+      "filename_template": "fb_{event_name}_{counter:03d}",
+      "create_subdirectories": true
     }
   },
-
   "tiktok": {
     "name": "TikTok",
     "description": "Vertical format optimized for TikTok",
@@ -124,22 +242,55 @@
         "target_platform": "instagram_stories",
         "maintain_aspect": false,
         "jpeg_quality": 82,
-        "resize_to": [1080, 1920]
+        "resize_to": [
+          1080,
+          1920
+        ],
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "social_media",
         "platform": "instagram_stories",
-        "quality_level": "standard"
+        "quality_level": "standard",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
+      },
+      "raw": {
+        "quality": 90,
+        "enhance": true,
+        "preserve_original": false
       }
     },
     "watermark": {
       "enabled": true,
       "style": "social_media",
-      "position": "bottom_center"
+      "position": "bottom_center",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100
     },
     "output": {
       "directory_structure": "tiktok",
-      "filename_template": "tiktok_{event_name}_{counter:03d}"
+      "filename_template": "tiktok_{event_name}_{counter:03d}",
+      "create_subdirectories": true
     }
   }
 }

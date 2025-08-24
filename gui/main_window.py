@@ -957,6 +957,7 @@ class MediaProcessorGUI:
         self.audio_settings_frame = ttk.Frame(self.preset_settings_notebook)
         self.organization_frame = ttk.Frame(self.preset_settings_notebook)
         self.raw_settings_frame = ttk.Frame(self.preset_settings_notebook)
+        self.metadata_settings_frame = ttk.Frame(self.preset_settings_notebook)
 
         # Add frames to notebook
         self.preset_settings_notebook.add(
@@ -970,6 +971,7 @@ class MediaProcessorGUI:
         )
         self.preset_settings_notebook.add(self.organization_frame, text="Organization")
         self.preset_settings_notebook.add(self.raw_settings_frame, text="RAW Settings")
+        self.preset_settings_notebook.add(self.metadata_settings_frame, text="Metadata")
 
         # Create settings widgets
         self._create_photo_settings_widgets()
@@ -977,6 +979,7 @@ class MediaProcessorGUI:
         self._create_audio_settings_widgets()
         self._create_organization_widgets()
         self._create_raw_settings_widgets()
+        self._create_metadata_settings_widgets()
 
         # Bind preset selection change for editing
         self.edit_preset_combo.bind("<<ComboboxSelected>>", self.on_edit_preset_changed)
@@ -1534,6 +1537,290 @@ TEMPLATE EXAMPLES:
             variable=self.raw_preserve_var,
             style="TCheckbutton",
         ).grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+
+    def _create_metadata_settings_widgets(self):
+        """Create metadata settings widgets."""
+        frame = self.metadata_settings_frame
+
+        # Load metadata profiles from JSON
+        try:
+            from pathlib import Path
+            import json
+
+            metadata_config_path = (
+                Path(__file__).parent.parent / "config" / "metadata_settings.json"
+            )
+            with open(metadata_config_path, "r") as f:
+                self.metadata_config = json.load(f)
+        except Exception as e:
+            logger.warning(f"Could not load metadata config: {e}")
+            # Fallback to basic configuration
+            self.metadata_config = {
+                "metadata_profiles": {
+                    "standard": {
+                        "name": "Standard Profile",
+                        "description": "Standard metadata profile",
+                    }
+                }
+            }
+
+        # Metadata profile selection
+        ttk.Label(
+            frame, text="Metadata Profile:", font=self.theme.get_font("label")
+        ).grid(row=0, column=0, sticky="w", padx=5, pady=5)
+
+        self.metadata_profile_var = tk.StringVar(value="standard")
+        profile_names = list(self.metadata_config.get("metadata_profiles", {}).keys())
+        self.metadata_profile_combo = ttk.Combobox(
+            frame,
+            textvariable=self.metadata_profile_var,
+            values=profile_names,
+            state="readonly",
+            width=20,
+        )
+        self.metadata_profile_combo.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+
+        # Profile description
+        self.metadata_profile_desc = ttk.Label(
+            frame, text="", font=self.theme.get_font("secondary"), style="Muted.TLabel"
+        )
+        self.metadata_profile_desc.grid(row=0, column=2, sticky="w", padx=10, pady=5)
+
+        # Bind profile selection change
+        self.metadata_profile_combo.bind(
+            "<<ComboboxSelected>>", self._on_metadata_profile_changed
+        )
+
+        # Main container for add/remove sections
+        main_container = ttk.Frame(frame)
+        main_container.grid(
+            row=1, column=0, columnspan=3, sticky="nsew", padx=5, pady=10
+        )
+
+        # Configure grid weights
+        frame.grid_columnconfigure(2, weight=1)
+        frame.grid_rowconfigure(1, weight=1)
+        main_container.grid_columnconfigure(0, weight=1)
+        main_container.grid_columnconfigure(1, weight=1)
+
+        # "ADD TO FILE" Section
+        self.add_metadata_frame = ttk.LabelFrame(
+            main_container, text="Add to File", padding="10"
+        )
+        self.add_metadata_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
+
+        # "REMOVE FROM FILE" Section
+        self.remove_metadata_frame = ttk.LabelFrame(
+            main_container, text="Remove from File", padding="10"
+        )
+        self.remove_metadata_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
+
+        # Create scrollable areas for both sections
+        self._create_add_metadata_widgets()
+        self._create_remove_metadata_widgets()
+
+        # Initialize with default profile
+        self._on_metadata_profile_changed()
+
+    def _create_add_metadata_widgets(self):
+        """Create widgets for adding metadata."""
+        frame = self.add_metadata_frame
+
+        # Create scrollable frame
+        canvas = tk.Canvas(frame, height=400, bg=self.theme.get_color("bg_primary"))
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Pack canvas and scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Store references for dynamic content
+        self.add_metadata_canvas = canvas
+        self.add_metadata_scrollable = scrollable_frame
+        self.add_metadata_widgets = {}
+
+        # Common metadata fields
+        metadata_fields = [
+            ("artist", "Artist/Creator"),
+            ("copyright", "Copyright"),
+            ("rights", "Rights"),
+            ("software", "Software"),
+            ("comment", "Comment"),
+            ("keywords", "Keywords"),
+            ("title", "Title"),
+            ("description", "Description"),
+            ("location", "Location"),
+            ("city", "City"),
+            ("state", "State"),
+            ("country", "Country"),
+            ("event_name", "Event Name"),
+            ("venue", "Venue"),
+            ("photographer", "Photographer"),
+        ]
+
+        row = 0
+        for field_key, field_label in metadata_fields:
+            ttk.Label(
+                scrollable_frame,
+                text=f"{field_label}:",
+                font=self.theme.get_font("label"),
+            ).grid(row=row, column=0, sticky="w", padx=5, pady=2)
+
+            var = tk.StringVar()
+            self.add_metadata_widgets[field_key] = var
+
+            if field_key in ["keywords", "description", "comment"]:
+                # Multi-line entry for longer fields
+                text_widget = tk.Text(
+                    scrollable_frame,
+                    height=2,
+                    width=30,
+                    font=self.theme.get_font("primary"),
+                    bg=self.theme.get_color("bg_input"),
+                    fg=self.theme.get_color("text_primary"),
+                    relief="solid",
+                    borderwidth=1,
+                )
+                text_widget.grid(row=row, column=1, sticky="w", padx=5, pady=2)
+                self.add_metadata_widgets[f"{field_key}_widget"] = text_widget
+            else:
+                # Single-line entry
+                entry = ttk.Entry(scrollable_frame, textvariable=var, width=30)
+                entry.grid(row=row, column=1, sticky="w", padx=5, pady=2)
+
+            row += 1
+
+    def _create_remove_metadata_widgets(self):
+        """Create widgets for removing metadata."""
+        frame = self.remove_metadata_frame
+
+        # Create scrollable frame
+        canvas = tk.Canvas(frame, height=400, bg=self.theme.get_color("bg_primary"))
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Pack canvas and scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Store references
+        self.remove_metadata_canvas = canvas
+        self.remove_metadata_scrollable = scrollable_frame
+        self.remove_metadata_widgets = {}
+
+        # Remove metadata options
+        remove_options = [
+            ("personal_info", "Remove Personal Information"),
+            ("gps_location", "Remove GPS/Location Data"),
+            ("camera_serial", "Remove Camera Serial Numbers"),
+            ("lens_serial", "Remove Lens Serial Numbers"),
+            ("personal_keywords", "Remove Personal Keywords"),
+            ("user_comments", "Remove User Comments"),
+            ("rating", "Remove Star Ratings"),
+            ("color_labels", "Remove Color Labels"),
+            ("face_tags", "Remove Face Tags"),
+        ]
+
+        row = 0
+        for option_key, option_label in remove_options:
+            var = tk.BooleanVar()
+            self.remove_metadata_widgets[option_key] = var
+
+            checkbox = ttk.Checkbutton(
+                scrollable_frame, text=option_label, variable=var, style="TCheckbutton"
+            )
+            checkbox.grid(row=row, column=0, sticky="w", padx=5, pady=3)
+            row += 1
+
+        # Custom EXIF fields to remove
+        ttk.Label(
+            scrollable_frame,
+            text="Custom EXIF Fields to Remove:",
+            font=self.theme.get_font("heading"),
+        ).grid(row=row, column=0, sticky="w", padx=5, pady=(15, 5))
+        row += 1
+
+        self.custom_exif_remove = tk.Text(
+            scrollable_frame,
+            height=8,
+            width=40,
+            font=self.theme.get_font("small"),
+            bg=self.theme.get_color("bg_input"),
+            fg=self.theme.get_color("text_primary"),
+            relief="solid",
+            borderwidth=1,
+            wrap=tk.WORD,
+        )
+        self.custom_exif_remove.grid(row=row, column=0, sticky="ew", padx=5, pady=2)
+
+        # Add placeholder text
+        self.custom_exif_remove.insert(
+            "1.0",
+            "Enter EXIF field names to remove, one per line:\nEXIF.CameraOwnerName\nXMP.aux.SerialNumber\nGPS.GPSLatitude",
+        )
+
+        # Configure grid weights
+        scrollable_frame.grid_columnconfigure(0, weight=1)
+
+    def _on_metadata_profile_changed(self, event=None):
+        """Handle metadata profile selection change."""
+        try:
+            profile_key = self.metadata_profile_var.get()
+            profile = self.metadata_config["metadata_profiles"].get(profile_key, {})
+
+            # Update description
+            description = profile.get("description", "")
+            self.metadata_profile_desc.config(text=description)
+
+            # Update add metadata fields
+            add_metadata = profile.get("add_metadata", {})
+            for field_key, var in self.add_metadata_widgets.items():
+                if field_key.endswith("_widget"):
+                    continue
+
+                value = add_metadata.get(field_key, "")
+                if (
+                    field_key in ["keywords", "description", "comment"]
+                    and f"{field_key}_widget" in self.add_metadata_widgets
+                ):
+                    # Handle text widgets
+                    widget = self.add_metadata_widgets[f"{field_key}_widget"]
+                    widget.delete("1.0", tk.END)
+                    widget.insert("1.0", value)
+                else:
+                    # Handle string variables
+                    var.set(value)
+
+            # Update remove metadata options
+            remove_metadata = profile.get("remove_metadata", {})
+            for option_key, var in self.remove_metadata_widgets.items():
+                if isinstance(var, tk.BooleanVar):
+                    value = remove_metadata.get(option_key, False)
+                    var.set(value)
+
+            # Update custom EXIF fields
+            private_exif = remove_metadata.get("private_exif", [])
+            if hasattr(self, "custom_exif_remove"):
+                self.custom_exif_remove.delete("1.0", tk.END)
+                self.custom_exif_remove.insert("1.0", "\n".join(private_exif))
+
+        except Exception as e:
+            logger.warning(f"Error updating metadata profile: {e}")
 
     def _setup_layout(self):
         """Set up the layout of all widgets."""
@@ -2240,6 +2527,46 @@ TEMPLATE EXAMPLES:
         self.raw_enhance_var.set(raw.get("enhance", True))
         self.raw_preserve_var.set(raw.get("preserve_original", False))
 
+        # Metadata settings
+        metadata = getattr(preset, "metadata_settings", {})
+        if metadata:
+            # Set metadata profile if specified
+            profile_name = metadata.get("profile", "standard")
+            if profile_name in self.metadata_config.get("metadata_profiles", {}):
+                self.metadata_profile_var.set(profile_name)
+                self._on_metadata_profile_changed()
+
+            # Load custom add metadata values
+            add_metadata = metadata.get("add_metadata", {})
+            for field_key, var in self.add_metadata_widgets.items():
+                if field_key.endswith("_widget"):
+                    continue
+                value = add_metadata.get(field_key, "")
+                if (
+                    field_key in ["keywords", "description", "comment"]
+                    and f"{field_key}_widget" in self.add_metadata_widgets
+                ):
+                    # Handle text widgets
+                    widget = self.add_metadata_widgets[f"{field_key}_widget"]
+                    widget.delete("1.0", tk.END)
+                    widget.insert("1.0", value)
+                else:
+                    # Handle string variables
+                    var.set(value)
+
+            # Load remove metadata settings
+            remove_metadata = metadata.get("remove_metadata", {})
+            for option_key, var in self.remove_metadata_widgets.items():
+                if isinstance(var, tk.BooleanVar):
+                    value = remove_metadata.get(option_key, False)
+                    var.set(value)
+
+            # Load custom EXIF fields to remove
+            private_exif = remove_metadata.get("private_exif", [])
+            if hasattr(self, "custom_exif_remove"):
+                self.custom_exif_remove.delete("1.0", tk.END)
+                self.custom_exif_remove.insert("1.0", "\n".join(private_exif))
+
     def save_preset_changes(self):
         """Save changes to the current preset."""
         try:
@@ -2397,6 +2724,50 @@ TEMPLATE EXAMPLES:
             "naming_template": self.naming_template_var.get(),
         }
 
+        # Metadata settings
+        metadata_settings = None
+        if hasattr(self, "metadata_profile_var") and hasattr(
+            self, "add_metadata_widgets"
+        ):
+            # Collect add metadata values
+            add_metadata = {}
+            for field_key, var in self.add_metadata_widgets.items():
+                if field_key.endswith("_widget"):
+                    continue
+                if (
+                    field_key in ["keywords", "description", "comment"]
+                    and f"{field_key}_widget" in self.add_metadata_widgets
+                ):
+                    # Handle text widgets
+                    widget = self.add_metadata_widgets[f"{field_key}_widget"]
+                    value = widget.get("1.0", tk.END).strip()
+                    add_metadata[field_key] = value
+                else:
+                    # Handle string variables
+                    add_metadata[field_key] = var.get()
+
+            # Collect remove metadata settings
+            remove_metadata = {}
+            for option_key, var in self.remove_metadata_widgets.items():
+                if isinstance(var, tk.BooleanVar):
+                    remove_metadata[option_key] = var.get()
+
+            # Collect custom EXIF fields to remove
+            if hasattr(self, "custom_exif_remove"):
+                custom_exif_text = self.custom_exif_remove.get("1.0", tk.END).strip()
+                private_exif = [
+                    line.strip()
+                    for line in custom_exif_text.split("\n")
+                    if line.strip()
+                ]
+                remove_metadata["private_exif"] = private_exif
+
+            metadata_settings = {
+                "profile": self.metadata_profile_var.get(),
+                "add_metadata": add_metadata,
+                "remove_metadata": remove_metadata,
+            }
+
         return ProcessingPreset(
             name=self.preset_name_var.get(),
             description=self.preset_desc_var.get(),
@@ -2405,6 +2776,7 @@ TEMPLATE EXAMPLES:
             audio_settings=audio_settings,
             raw_settings=raw_settings,
             organization=organization,
+            metadata_settings=metadata_settings,
         )
 
     def _refresh_preset_combos(self):

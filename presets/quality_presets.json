@@ -6,20 +6,51 @@
       "image": {
         "enhancement_level": "light",
         "jpeg_quality": 75,
-        "resize_to": [1280, 853]
+        "resize_to": [
+          1280,
+          853
+        ],
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "compress",
-        "quality_level": "preview"
+        "quality_level": "preview",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
       },
       "raw": {
         "preset": "web_optimized",
         "output_format": "JPEG",
-        "quality": 75
+        "quality": 75,
+        "enhance": true,
+        "preserve_original": false
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
       }
     },
     "watermark": {
-      "enabled": false
+      "enabled": false,
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100,
+      "position": "bottom_right",
+      "style": "standard"
     },
     "processing_options": {
       "parallel_processing": true,
@@ -28,10 +59,10 @@
     },
     "output": {
       "directory_structure": "quick_preview/{date}",
-      "filename_template": "preview_{counter:03d}"
+      "filename_template": "preview_{counter:03d}",
+      "create_subdirectories": true
     }
   },
-
   "professional": {
     "name": "Professional Quality",
     "description": "Maximum quality for important deliverables and client work",
@@ -39,21 +70,48 @@
       "image": {
         "enhancement_level": "heavy",
         "jpeg_quality": 95,
-        "maintain_aspect": true
+        "maintain_aspect": true,
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "compress",
-        "quality_level": "archive"
+        "quality_level": "archive",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
       },
       "raw": {
         "preset": "high_quality_archive",
         "output_format": "TIFF",
-        "quality": 100
+        "quality": 100,
+        "enhance": true,
+        "preserve_original": false
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
       }
     },
     "watermark": {
       "enabled": true,
-      "style": "prominent"
+      "style": "prominent",
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100,
+      "position": "bottom_right"
     },
     "processing_options": {
       "parallel_processing": false,
@@ -63,10 +121,10 @@
     },
     "output": {
       "directory_structure": "professional/{event_name}/{date}",
-      "filename_template": "{event_name}_pro_{counter:03d}"
+      "filename_template": "{event_name}_pro_{counter:03d}",
+      "create_subdirectories": true
     }
   },
-
   "archive": {
     "name": "Archive Quality",
     "description": "High quality for long-term storage and future use",
@@ -75,20 +133,48 @@
         "enhancement_level": "light",
         "jpeg_quality": 92,
         "maintain_aspect": true,
-        "preserve_original_size": true
+        "preserve_original_size": true,
+        "format": "JPEG",
+        "enhance": true
       },
       "video": {
         "operation": "compress",
-        "quality_level": "archive"
+        "quality_level": "archive",
+        "max_resolution": [
+          1920,
+          1080
+        ],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
       },
       "raw": {
         "preset": "high_quality_archive",
         "output_format": "TIFF",
-        "quality": 98
+        "quality": 98,
+        "enhance": true,
+        "preserve_original": false
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 44100,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -23.0,
+        "max_peak": -1.0,
+        "noise_reduction": "light"
       }
     },
     "watermark": {
-      "enabled": false
+      "enabled": false,
+      "file": "",
+      "opacity": 0.3,
+      "margin": 100,
+      "position": "bottom_right",
+      "style": "standard"
     },
     "metadata": {
       "preserve_all_exif": true,
@@ -101,7 +187,8 @@
     },
     "output": {
       "directory_structure": "archive/{year}/{month}/{event_name}",
-      "filename_template": "{date}_{event_name}_{counter:03d}"
+      "filename_template": "{date}_{event_name}_{counter:03d}",
+      "create_subdirectories": true
     }
   }
 }

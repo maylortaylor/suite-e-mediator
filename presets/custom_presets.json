@@ -26,10 +26,7 @@
       }
     },
     "metadata": {
-      "keywords": [
-        "custom",
-        "suite e studios"
-      ],
+      "keywords": ["custom", "suite e studios"],
       "event_type": "custom",
       "copyright": "\u00a9 Suite E Studios",
       "venue": "Suite E Studios",
@@ -43,6 +40,121 @@
     "output": {
       "create_subdirectories": true,
       "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{counter:03d}"
+    }
+  },
+  "final_friday": {
+    "name": "Final Friday",
+    "description": "Live music event on the last Friday of each month at Suite E Studios",
+    "processing": {
+      "image": {
+        "jpeg_quality": 85,
+        "enhancement_level": "medium",
+        "resize_to": [1920, 1080]
+      },
+      "video": {
+        "quality_level": "standard",
+        "platform": "website"
+      },
+      "raw": {
+        "output_format": "JPEG",
+        "quality": 90
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard"
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}/processed",
+      "filename_template": "{event_name}_{date}_{artist_names}_{counter:03d}"
+    },
+    "metadata": {
+      "profile": "standard",
+      "add_metadata": {
+        "artist": "",
+        "copyright": "\u00a9 Suite E Studios",
+        "rights": "\u00a9 Suite E Studios",
+        "software": "Suite E Studios Media Processor v1.0",
+        "comment": "Processed by Suite E Studios",
+        "keywords": "suite e studios, live music, event photography",
+        "title": "",
+        "description": "",
+        "location": "",
+        "city": "",
+        "state": "",
+        "country": "USA",
+        "event_name": "",
+        "venue": "",
+        "photographer": ""
+      },
+      "remove_metadata": {
+        "personal_info": true,
+        "gps_location": false,
+        "camera_serial": true,
+        "lens_serial": true,
+        "personal_keywords": true,
+        "user_comments": false,
+        "rating": false,
+        "color_labels": false,
+        "face_tags": true,
+        "private_exif": [
+          "MakerNote.SerialNumber",
+          "EXIF.CameraOwnerName",
+          "EXIF.OwnerName",
+          "EXIF.CameraSerial",
+          "XMP.aux.SerialNumber"
+        ]
+      }
+    }
+  },
+  "test_audio": {
+    "name": "Test Audio Settings",
+    "description": "Test preset to verify audio settings are saved",
+    "processing": {
+      "image": {
+        "jpeg_quality": 85,
+        "format": "JPEG",
+        "enhance": true,
+        "resize_to": [1920, 1080]
+      },
+      "video": {
+        "max_resolution": [1920, 1080],
+        "bitrate": "3000k",
+        "fps": 30,
+        "codec": "h264",
+        "format": "MP4"
+      },
+      "audio": {
+        "codec": "aac",
+        "bitrate": "320k",
+        "sample_rate": 48000,
+        "channels": 2,
+        "volume_normalization": true,
+        "enable_loudness_normalization": true,
+        "target_lufs": -16.0,
+        "max_peak": -3.0,
+        "noise_reduction": "medium"
+      },
+      "raw": {
+        "output_format": "JPEG",
+        "quality": 95,
+        "enhance": true,
+        "preserve_original": false
+      }
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "standard",
+      "file": "",
+      "position": "bottom_right",
+      "opacity": 0.3,
+      "margin": 100
+    },
+    "output": {
+      "create_subdirectories": true,
+      "directory_structure": "{event_name}/{date}",
       "filename_template": "{event_name}_{date}_{counter:03d}"
     }
   }
