@@ -176,8 +176,10 @@ class MediaProcessor:
         naming_variables = {
             "event_name": event_name or "Event",
             "artist_names": artist_names or "Unknown_Artist",
-            "date": datetime.now().strftime("%Y-%m-%d"),
-            "datetime": datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+            "date": datetime.now().strftime("%m.%d.%Y"),  # Changed to date1 format
+            "date1": datetime.now().strftime("%m.%d.%Y"),
+            "date2": datetime.now().strftime("%Y.%m.%d"),
+            "datetime": datetime.now().strftime("%m.%d.%Y_%H-%M-%S"),
             "dayofweek": datetime.now().strftime("%A"),
             "date2digit": datetime.now().strftime("%m"),
             "month_name": datetime.now().strftime("%B"),
@@ -264,11 +266,14 @@ class MediaProcessor:
         return processing_plan
 
     def _sanitize_filename(self, filename: str) -> str:
-        """Sanitize filename to be filesystem-safe."""
-        # Replace problematic characters
+        """Sanitize filename to be filesystem-safe, especially for Windows."""
+        # Replace Windows-invalid characters with underscores
         invalid_chars = '<>:"/\\|?*'
         for char in invalid_chars:
             filename = filename.replace(char, "_")
+
+        # Replace spaces with underscores for consistency
+        filename = filename.replace(" ", "_")
 
         # Remove multiple consecutive underscores
         while "__" in filename:
@@ -277,9 +282,16 @@ class MediaProcessor:
         # Trim whitespace and underscores
         filename = filename.strip(" _")
 
-        # Ensure reasonable length
+        # Ensure it doesn't end with a dot (Windows issue)
+        filename = filename.rstrip(".")
+
+        # Ensure reasonable length (Windows path limit considerations)
         if len(filename) > 200:
-            filename = filename[:200]
+            filename = filename[:200].rstrip("_.")
+
+        # Ensure it's not empty
+        if not filename:
+            filename = "media_file"
 
         return filename
 

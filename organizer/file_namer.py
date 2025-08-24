@@ -33,7 +33,10 @@ class FileNamer:
                 "required": False,
                 "fallback": "Unknown_Artist",
             },
-            "date": {"source": "system", "format": "%Y-%m-%d"},
+            "date": {
+                "source": "system",
+                "format": "%m.%d.%Y",
+            },  # Changed to date1 format
             "date1": {"source": "system", "format": "%m.%d.%Y"},
             "date2": {"source": "system", "format": "%Y.%m.%d"},
             "datetime": {"source": "system", "format": "%m.%d.%Y_%H-%M-%S"},
@@ -129,7 +132,7 @@ class FileNamer:
         now = datetime.now()
         all_variables.update(
             {
-                "date": now.strftime("%Y-%m-%d"),
+                "date": now.strftime("%m.%d.%Y"),  # Changed to date1 format
                 "date1": now.strftime("%m.%d.%Y"),
                 "date2": now.strftime("%Y.%m.%d"),
                 "datetime": now.strftime("%m.%d.%Y_%H-%M-%S"),
@@ -247,14 +250,14 @@ class FileNamer:
             return text
 
     def sanitize_filename(self, filename: str) -> str:
-        """Sanitize filename to be filesystem-safe."""
+        """Sanitize filename to be filesystem-safe, especially for Windows."""
 
-        # Replace problematic characters
+        # Replace Windows-invalid characters with underscores
         invalid_chars = '<>:"/\\|?*'
         for char in invalid_chars:
             filename = filename.replace(char, "_")
 
-        # Replace spaces with underscores (optional)
+        # Replace spaces with underscores for consistency
         filename = filename.replace(" ", "_")
 
         # Remove multiple consecutive underscores
@@ -264,9 +267,12 @@ class FileNamer:
         # Trim underscores from ends
         filename = filename.strip("_")
 
+        # Ensure it doesn't end with a dot (Windows issue)
+        filename = filename.rstrip(".")
+
         # Ensure reasonable length (Windows has 260 char path limit)
         if len(filename) > 200:
-            filename = filename[:200].rstrip("_")
+            filename = filename[:200].rstrip("_.")
 
         # Ensure it's not empty
         if not filename:
