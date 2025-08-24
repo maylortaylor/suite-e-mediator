@@ -187,6 +187,7 @@ class MediaProcessor:
             "city": self.config_manager.get_app_setting("venue_info", {}).get(
                 "city", "St Petersburg"
             ),
+            "platform": "instagram",  # Default platform - should be extracted from preset
         }
 
         # Get processing order
@@ -207,7 +208,7 @@ class MediaProcessor:
         for media_file in ordered_files:
             # Generate output filename
             template = preset.organization.get(
-                "naming_template", "{event_name}_{sequence:03d}"
+                "naming_template", "{event_name}_{counter:03d}"
             )
 
             # Add file-specific variables
@@ -215,6 +216,7 @@ class MediaProcessor:
             file_variables.update(
                 {
                     "sequence": sequence,
+                    "counter": sequence,  # Add counter for backward compatibility
                     "device": media_file.device_type,
                     "media_type": media_file.media_type,
                     "original_name": media_file.path.stem,

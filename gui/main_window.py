@@ -1679,11 +1679,141 @@ class MediaProcessorGUI:
         self.media_file_count = file_count
 
         if file_count > 0:
+            # Count files by file extension and calculate sizes
+            extension_counts = {}
+            extension_sizes_mb = {}
+            type_counts = {}
+            type_sizes_mb = {}
+
+            for media_file in scan_result["files"]:
+                # Count by actual file extension
+                extension = media_file.extension.lower()
+                file_size_mb = media_file.size_bytes / (1024 * 1024)
+
+                extension_counts[extension] = extension_counts.get(extension, 0) + 1
+                extension_sizes_mb[extension] = (
+                    extension_sizes_mb.get(extension, 0) + file_size_mb
+                )
+
+                # Also count by media type for summary
+                media_type = media_file.media_type
+                type_counts[media_type] = type_counts.get(media_type, 0) + 1
+                type_sizes_mb[media_type] = (
+                    type_sizes_mb.get(media_type, 0) + file_size_mb
+                )
+
+            # Create detailed breakdown text with sizes on multiple lines
+            breakdown_lines = [f"✅ Found {file_count} media files:"]
+
+            # Group extensions by type with emojis
+            photo_extensions = [
+                ext
+                for ext in extension_counts.keys()
+                if ext
+                in [
+                    ".jpg",
+                    ".jpeg",
+                    ".png",
+                    ".tiff",
+                    ".tif",
+                    ".webp",
+                    ".heic",
+                    ".heif",
+                    ".bmp",
+                    ".gif",
+                    ".jfif",
+                    ".avif",
+                ]
+            ]
+            raw_extensions = [
+                ext
+                for ext in extension_counts.keys()
+                if ext
+                in [
+                    ".cr2",
+                    ".cr3",
+                    ".nef",
+                    ".nrw",
+                    ".arw",
+                    ".dng",
+                    ".raf",
+                    ".orf",
+                    ".rw2",
+                    ".raw",
+                    ".rw",
+                    ".iiq",
+                    ".3fr",
+                    ".fff",
+                    ".srw",
+                ]
+            ]
+            video_extensions = [
+                ext
+                for ext in extension_counts.keys()
+                if ext
+                in [
+                    ".mp4",
+                    ".mov",
+                    ".avi",
+                    ".mkv",
+                    ".m4v",
+                    ".mts",
+                    ".m2ts",
+                    ".webm",
+                    ".3gp",
+                    ".flv",
+                    ".wmv",
+                    ".mpg",
+                    ".mpeg",
+                ]
+            ]
+
+            # Sort extensions within each type by count (most common first)
+            photo_extensions.sort(key=lambda x: extension_counts[x], reverse=True)
+            raw_extensions.sort(key=lambda x: extension_counts[x], reverse=True)
+            video_extensions.sort(key=lambda x: extension_counts[x], reverse=True)
+
+            # Add photo file types
+            if photo_extensions:
+                breakdown_lines.append("   📸 Photos:")
+                for ext in photo_extensions:
+                    count = extension_counts[ext]
+                    size_mb = extension_sizes_mb[ext]
+                    breakdown_lines.append(
+                        f"      {ext.upper()}: {count} file{'s' if count != 1 else ''} ({size_mb:.1f} MB)"
+                    )
+
+            # Add RAW file types
+            if raw_extensions:
+                breakdown_lines.append("   📷 RAW Files:")
+                for ext in raw_extensions:
+                    count = extension_counts[ext]
+                    size_mb = extension_sizes_mb[ext]
+                    breakdown_lines.append(
+                        f"      {ext.upper()}: {count} file{'s' if count != 1 else ''} ({size_mb:.1f} MB)"
+                    )
+
+            # Add video file types
+            if video_extensions:
+                breakdown_lines.append("   🎥 Videos:")
+                for ext in video_extensions:
+                    count = extension_counts[ext]
+                    size_mb = extension_sizes_mb[ext]
+                    breakdown_lines.append(
+                        f"      {ext.upper()}: {count} file{'s' if count != 1 else ''} ({size_mb:.1f} MB)"
+                    )
+
+            breakdown_lines.append(f"   💾 Total size: {total_size_mb:.1f} MB")
+
+            # Join all lines with newlines
+            multiline_text = "\n".join(breakdown_lines)
+
             self.file_count_label.config(
-                text=f"✅ Found {file_count} media files ({total_size_mb:.1f} MB total)",
-                foreground="green",
+                text=multiline_text, foreground="green", justify="left"
             )
-            self.update_status(f"Found {file_count} processable media files")
+            self.update_status(
+                f"Found {file_count} processable media files ({total_size_mb:.1f} MB total)"
+            )
         else:
             self.file_count_label.config(
                 text="❌ No supported media files found in this folder",
@@ -1752,7 +1882,7 @@ class MediaProcessorGUI:
 
                 # Add output folder if selected
                 if self.selected_output_folder:
-                    process_args["output_base_path"] = str(self.selected_output_folder)
+                    process_args["output_folder"] = str(self.selected_output_folder)
 
                 result = self.processor.process_media_folder(**process_args)
 
